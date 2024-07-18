@@ -73,7 +73,8 @@ class AsciidoctorPluginSmokeTest extends AbstractPluginValidatingSmokeTest {
                     "org.asciidoctor.decktape",
                     "org.asciidoctor.jvm.leanpub",
                     "org.asciidoctor.jvm.leanpub.dropbox-copy",
-                    "org.asciidoctor.jvm.revealjs",
+                    // Plugin broken after JCenter dependency disappeared
+//                    "org.asciidoctor.jvm.revealjs",
                 ].collectEntries { plugin ->
                     [(plugin): Versions.of(version)]
                 }
