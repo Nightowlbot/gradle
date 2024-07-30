@@ -49,6 +49,8 @@ import org.gradle.buildinit.plugins.internal.modifiers.BuildInitTestFramework;
 import org.gradle.buildinit.plugins.internal.modifiers.ComponentType;
 import org.gradle.buildinit.plugins.internal.modifiers.Language;
 import org.gradle.buildinit.plugins.internal.modifiers.ModularizationOption;
+import org.gradle.buildinit.templates.internal.InitProjectSpec;
+import org.gradle.buildinit.templates.internal.TemplateLoader;
 import org.gradle.internal.instrumentation.api.annotations.NotToBeReplacedByLazyProperty;
 import org.gradle.internal.instrumentation.api.annotations.ToBeReplacedByLazyProperty;
 import org.gradle.internal.logging.text.TreeFormatter;
@@ -279,6 +281,20 @@ public abstract class InitBuild extends DefaultTask {
     @TaskAction
     public void setupProjectLayout() {
         UserInputHandler inputHandler = getEffectiveInputHandler();
+        List<InitProjectSpec> loadTemplates = new TemplateLoader().loadTemplates();
+        if (loadTemplates.isEmpty()) {
+            doProceduralProjectGeneration(inputHandler);
+        } else {
+            doTemplateProjectGeneration(inputHandler);
+        }
+    }
+
+    private void doTemplateProjectGeneration(UserInputHandler inputHandler) {
+        assert inputHandler != null; // TODO: the unused variable warning is trash
+        throw new RuntimeException("Generating project from templates is not yet supported.");
+    }
+
+    private void doProceduralProjectGeneration(UserInputHandler inputHandler) {
         GenerationSettings settings = inputHandler.askUser(this::calculateGenerationSettings).get();
 
         boolean userInterrupted = inputHandler.interrupted();

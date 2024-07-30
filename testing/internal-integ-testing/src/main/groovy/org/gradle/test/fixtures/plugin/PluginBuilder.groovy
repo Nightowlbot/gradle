@@ -235,6 +235,11 @@ class PluginBuilder {
         this
     }
 
+    PluginBuilder addPluginWithCustomCode(String code, String id = "test-plugin", String className = "TestPlugin") {
+        addPlugin(code, id, className)
+        this
+    }
+
     PluginBuilder addRuleSource(String pluginId) {
         String className = "TestRuleSource"
         addPluginSource(pluginId, className, """
