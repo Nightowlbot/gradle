@@ -14,15 +14,10 @@
  * limitations under the License.
  */
 
-package org.gradle.buildinit.templates.internal;
-
-import org.gradle.buildinit.templates.InitProjectSpec;
-
-import java.util.Collections;
-import java.util.List;
-
-public class TemplateLoader {
-    public List<InitProjectSpec> loadTemplates() {
-        return Collections.emptyList();
-    }
-}
+/**
+ * Provides the API for defining project templates.
+ *
+ * @since 8.10
+ */
+@org.gradle.api.NonNullApi
+package org.gradle.buildinit.templates;

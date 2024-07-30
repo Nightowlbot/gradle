@@ -241,6 +241,25 @@ class BuildInitPluginTemplatesIntegrationTest extends AbstractIntegrationSpec {
                 project.getLogger().lifecycle("MyPlugin applied.");
         """, "org.example.myplugin")
 
-        pluginBuilder.publishAs("org.example.myplugin:plugin:1.0", mavenRepo, executer)
+        pluginBuilder.file("src/main/resources/META-INF/services/org.gradle.builtinit.templates.InitProjectSupplier").write("implementation-class=org.example.MySupplier")
+        pluginBuilder.file("src/main/java/org/example/MySupplier.java").write("""
+            package org.example;
+
+            import org.gradle.buildinit.templates.InitProjectSpec;
+            import org.gradle.buildinit.templates.InitProjectSupplier;
+
+            public class MySupplier implements InitProjectSupplier {
+                @Override
+                public List<InitProjectSpec> getProjectSpecs() {
+                    return Collections.emptyList();
+                }
+            }
+        """)
+
+        def results = pluginBuilder.publishAs("org.example.myplugin:plugin:1.0", mavenRepo, executer)
+
+        println()
+        println "Published: '${results.getPluginModule().with { m -> m.getGroup() + ':' + m.getModule() + ':' + m.getVersion() }}'"
+        println "To: '${mavenRepo.uri}'"
     }
 }

@@ -17,6 +17,7 @@
 package org.gradle.configuration;
 
 import com.google.common.base.Strings;
+import org.gradle.api.NonNullApi;
 import org.gradle.api.artifacts.ModuleVersionSelector;
 import org.gradle.plugin.management.PluginRequest;
 import org.gradle.plugin.management.internal.PluginCoordinates;
@@ -28,8 +29,8 @@ import org.gradle.plugin.use.internal.DefaultPluginId;
 import javax.annotation.Nullable;
 import java.util.Optional;
 
+@NonNullApi
 public final class TemplatePluginRequest implements PluginRequestInternal {
-
     private static final int PLUGIN_ID_INDEX = 0;
     private static final int PLUGIN_VERSION_INDEX = 1;
 

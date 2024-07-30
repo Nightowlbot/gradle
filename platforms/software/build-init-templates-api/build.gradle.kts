@@ -14,9 +14,12 @@
  * limitations under the License.
  */
 
-package org.gradle.buildinit.templates.internal;
+plugins {
+    id("gradlebuild.distribution.api-java")
+}
 
-public interface InitProjectParameter {
-    String getName();
-    Class<?> getParameterType();
+description = "Contains code plugins can use to supply templates to the Build Init plugin"
+
+dependencies {
+    api(project(":stdlib-java-extensions"))
 }

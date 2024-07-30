@@ -27,4 +27,16 @@ class TemplatePluginRequestTest extends Specification {
         request.getId().toString() == "org.barfuin.gradle.taskinfo"
         request.getVersion() == "2.2.0"
     }
+
+    def "reports error if invalid arg provided: #coords"() {
+        when:
+        TemplatePluginRequest.parsePluginRequest(coords)
+
+        then:
+        def exception = thrown(IllegalArgumentException)
+        exception.message == "Invalid plugin spec: '$coords' found in System Property 'org.gradle.buildinit.templates.plugins'. Expected format is 'id:version'."
+
+        where:
+        coords << ["", " ", "nonsense", ":more:nonsense", ":incorrect", "incorrect:", ":", "org.gradle:1.0.0:1.0.0"]
+    }
 }

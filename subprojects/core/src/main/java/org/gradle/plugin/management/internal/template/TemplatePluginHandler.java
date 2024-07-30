@@ -16,6 +16,7 @@
 
 package org.gradle.plugin.management.internal.template;
 
+import org.gradle.api.NonNullApi;
 import org.gradle.configuration.TemplatePluginRequest;
 import org.gradle.plugin.management.internal.PluginRequestInternal;
 import org.gradle.plugin.management.internal.PluginRequests;
@@ -24,6 +25,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@NonNullApi
 public final class TemplatePluginHandler {
     public static final String TEMPLATE_PLUGINS_PROP = "org.gradle.buildinit.templates.plugins";
 

@@ -49,7 +49,7 @@ import org.gradle.buildinit.plugins.internal.modifiers.BuildInitTestFramework;
 import org.gradle.buildinit.plugins.internal.modifiers.ComponentType;
 import org.gradle.buildinit.plugins.internal.modifiers.Language;
 import org.gradle.buildinit.plugins.internal.modifiers.ModularizationOption;
-import org.gradle.buildinit.templates.internal.InitProjectSpec;
+import org.gradle.buildinit.templates.InitProjectSpec;
 import org.gradle.buildinit.templates.internal.TemplateLoader;
 import org.gradle.internal.instrumentation.api.annotations.NotToBeReplacedByLazyProperty;
 import org.gradle.internal.instrumentation.api.annotations.ToBeReplacedByLazyProperty;

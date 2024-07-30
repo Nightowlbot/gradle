@@ -58,7 +58,7 @@ class TemplatePluginHandlerTest extends Specification {
         requests.size() == 0
     }
 
-    def "reports error if invalid arg provided"() {
+    def "reports error if invalid arg provided: #prop"() {
         given:
         if (prop != null) {
             System.setProperty(TemplatePluginHandler.TEMPLATE_PLUGINS_PROP, prop)

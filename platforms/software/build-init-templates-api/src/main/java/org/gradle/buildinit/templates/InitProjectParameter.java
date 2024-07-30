@@ -14,11 +14,30 @@
  * limitations under the License.
  */
 
-package org.gradle.buildinit.templates.internal;
+package org.gradle.buildinit.templates;
 
-import java.util.List;
+import org.gradle.api.Incubating;
 
-public interface InitProjectSpec {
-    String getDisplayName();
-    List<InitProjectParameter> getParameters();
+/**
+ * Represents a parameter that can be provided to a project template.
+ *
+ * @since 8.10
+ */
+@Incubating
+public interface InitProjectParameter {
+    /**
+     * Returns the name of the parameter.
+     *
+     * @return the name of the parameter
+     * @since 8.10
+     */
+    String getName();
+
+    /**
+     * Returns the type of the parameter.
+     *
+     * @return the type of the parameter
+     * @since 8.10
+     */
+    Class<?> getParameterType();
 }
