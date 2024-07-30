@@ -23,6 +23,8 @@ import java.util.List;
 
 public class TemplateLoader {
     public List<InitProjectSpec> loadTemplates() {
+
+        // TODO: Service load here.  Test running
         return Collections.emptyList();
     }
 }

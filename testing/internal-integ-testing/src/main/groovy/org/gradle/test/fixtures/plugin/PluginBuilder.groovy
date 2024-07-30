@@ -73,7 +73,8 @@ class PluginBuilder {
             apply plugin: "java-gradle-plugin"
             apply plugin: "groovy"
             dependencies {
-              implementation localGroovy()
+                implementation localGroovy()
+                implementation gradleApi()
             }
             group = "${packageName}"
             version = "1.0"

@@ -16,13 +16,11 @@
 
 package org.gradle.kotlin.dsl.provider
 
-import org.gradle.api.Project
 import org.gradle.api.internal.initialization.ClassLoaderScope
 import org.gradle.api.internal.initialization.ScriptHandlerInternal
 import org.gradle.api.internal.plugins.PluginAwareInternal
 import org.gradle.plugin.management.internal.PluginRequests
 import org.gradle.plugin.management.internal.autoapply.AutoAppliedPluginHandler
-import org.gradle.plugin.management.internal.template.TemplatePluginHandler
 import org.gradle.plugin.use.internal.PluginRequestApplicator
 import javax.inject.Inject
 

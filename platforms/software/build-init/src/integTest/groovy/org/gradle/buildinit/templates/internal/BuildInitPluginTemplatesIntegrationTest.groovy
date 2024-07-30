@@ -241,21 +241,25 @@ class BuildInitPluginTemplatesIntegrationTest extends AbstractIntegrationSpec {
                 project.getLogger().lifecycle("MyPlugin applied.");
         """, "org.example.myplugin")
 
-        pluginBuilder.file("src/main/resources/META-INF/services/org.gradle.builtinit.templates.InitProjectSupplier").write("implementation-class=org.example.MySupplier")
-        pluginBuilder.file("src/main/java/org/example/MySupplier.java").write("""
+        pluginBuilder.file("src/main/resources/META-INF/services/org.gradle.buildinit.templates.InitProjectSupplier") << "implementation-class=org.example.MySupplier"
+        pluginBuilder.java("org/example/MySupplier.java") << """
             package org.example;
+
+            import java.util.Collections;
+            import java.util.List;
 
             import org.gradle.buildinit.templates.InitProjectSpec;
             import org.gradle.buildinit.templates.InitProjectSupplier;
 
             public class MySupplier implements InitProjectSupplier {
                 @Override
-                public List<InitProjectSpec> getProjectSpecs() {
+                public List<InitProjectSpec> getProjectDefinitions() {
                     return Collections.emptyList();
                 }
             }
-        """)
+        """
 
+        executer.requireOwnGradleUserHomeDir("Adding new API that plugin needs") // TODO: Remove this when API is solid even that it isn't changing every test run
         def results = pluginBuilder.publishAs("org.example.myplugin:plugin:1.0", mavenRepo, executer)
 
         println()
