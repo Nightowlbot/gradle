@@ -23,6 +23,7 @@ import org.gradle.api.GradleException;
 import org.gradle.api.Incubating;
 import org.gradle.api.file.Directory;
 import org.gradle.api.file.ProjectLayout;
+import org.gradle.api.internal.project.ProjectInternal;
 import org.gradle.api.internal.tasks.userinput.NonInteractiveUserInputHandler;
 import org.gradle.api.internal.tasks.userinput.UserInputHandler;
 import org.gradle.api.internal.tasks.userinput.UserQuestions;
@@ -281,17 +282,18 @@ public abstract class InitBuild extends DefaultTask {
     @TaskAction
     public void setupProjectLayout() {
         UserInputHandler inputHandler = getEffectiveInputHandler();
-        List<InitProjectSpec> loadTemplates = new TemplateLoader().loadTemplates();
-        if (loadTemplates.isEmpty()) {
+        List<InitProjectSpec> templates = new TemplateLoader((ProjectInternal) getProject()).loadTemplates();
+        if (templates.isEmpty()) {
             doProceduralProjectGeneration(inputHandler);
         } else {
-            doTemplateProjectGeneration(inputHandler);
+            doTemplateProjectGeneration(inputHandler, templates);
         }
     }
 
-    private void doTemplateProjectGeneration(UserInputHandler inputHandler) {
+    private void doTemplateProjectGeneration(UserInputHandler inputHandler, List<InitProjectSpec> templates) {
         assert inputHandler != null; // TODO: the unused variable warning is trash
-        throw new RuntimeException("Generating project from templates is not yet supported.");
+        // TODO: change to info/debug
+        templates.forEach(template -> getLogger().warn("Loaded template: '" + template.getDisplayName() + "'"));
     }
 
     private void doProceduralProjectGeneration(UserInputHandler inputHandler) {

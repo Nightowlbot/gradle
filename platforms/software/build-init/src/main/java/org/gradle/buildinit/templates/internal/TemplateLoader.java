@@ -16,15 +16,27 @@
 
 package org.gradle.buildinit.templates.internal;
 
+import org.gradle.api.internal.project.ProjectInternal;
 import org.gradle.buildinit.templates.InitProjectSpec;
+import org.gradle.buildinit.templates.InitProjectSupplier;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.ServiceLoader;
 
 public class TemplateLoader {
-    public List<InitProjectSpec> loadTemplates() {
+    private final ClassLoader classLoader;
 
-        // TODO: Service load here.  Test running
-        return Collections.emptyList();
+    public TemplateLoader(ProjectInternal project) {
+        this.classLoader = project.getClassLoaderScope().getLocalClassLoader();
+    }
+
+    public List<InitProjectSpec> loadTemplates() {
+        List<InitProjectSpec> templates = new ArrayList<>();
+        // Load from the current thread to get the classes loaded by plugins, not the thread where InitProjectSupplier was loaded
+        for (InitProjectSupplier supplier : ServiceLoader.load(InitProjectSupplier.class, classLoader)) {
+            templates.addAll(supplier.getProjectDefinitions());
+        }
+        return templates;
     }
 }

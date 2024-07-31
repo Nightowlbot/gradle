@@ -23,10 +23,10 @@ import org.gradle.test.fixtures.plugin.PluginBuilder
 class BuildInitPluginTemplatesIntegrationTest extends AbstractIntegrationSpec {
     def "can specify 3rd party plugin using argument to init"() {
         when:
-        initSucceeds("org.barfuin.gradle.taskinfo:2.2.0")
+        initSucceedsWithTemplatePlugin("org.barfuin.gradle.taskinfo:2.2.0")
 
         then:
-        outputContains("Resolved plugin [id: 'org.barfuin.gradle.taskinfo', version: '2.2.0', apply: false]")
+        assertResolvedPlugin("org.barfuin.gradle.taskinfo", "2.2.0")
     }
 
     def "can specify plugin using argument to init with root build file present"() {
@@ -37,10 +37,10 @@ class BuildInitPluginTemplatesIntegrationTest extends AbstractIntegrationSpec {
         """)
 
         when:
-        initSucceeds("org.barfuin.gradle.taskinfo:2.2.0")
+        initSucceedsWithTemplatePlugin("org.barfuin.gradle.taskinfo:2.2.0")
 
         then:
-        outputContains("Resolved plugin [id: 'org.barfuin.gradle.taskinfo', version: '2.2.0', apply: false]")
+        assertResolvedPlugin("org.barfuin.gradle.taskinfo", "2.2.0")
     }
 
     def "can specify plugin using argument to init with root KTS build file present"() {
@@ -51,10 +51,10 @@ class BuildInitPluginTemplatesIntegrationTest extends AbstractIntegrationSpec {
         """)
 
         when:
-        initSucceeds("org.barfuin.gradle.taskinfo:2.2.0")
+        initSucceedsWithTemplatePlugin("org.barfuin.gradle.taskinfo:2.2.0")
 
         then:
-        outputContains("Resolved plugin [id: 'org.barfuin.gradle.taskinfo', version: '2.2.0', apply: false]")
+        assertResolvedPlugin("org.barfuin.gradle.taskinfo", "2.2.0")
     }
 
     def "can specify plugin using argument to init with settings file present"() {
@@ -63,10 +63,10 @@ class BuildInitPluginTemplatesIntegrationTest extends AbstractIntegrationSpec {
         """)
 
         when:
-        initSucceeds("org.barfuin.gradle.taskinfo:2.2.0")
+        initSucceedsWithTemplatePlugin("org.barfuin.gradle.taskinfo:2.2.0")
 
         then:
-        outputContains("Resolved plugin [id: 'org.barfuin.gradle.taskinfo', version: '2.2.0', apply: false]")
+        assertResolvedPlugin("org.barfuin.gradle.taskinfo", "2.2.0")
     }
 
     def "can specify plugin using argument to init with settings KTS file present"() {
@@ -75,10 +75,10 @@ class BuildInitPluginTemplatesIntegrationTest extends AbstractIntegrationSpec {
         """)
 
         when:
-        initSucceeds("org.barfuin.gradle.taskinfo:2.2.0")
+        initSucceedsWithTemplatePlugin("org.barfuin.gradle.taskinfo:2.2.0")
 
         then:
-        outputContains("Resolved plugin [id: 'org.barfuin.gradle.taskinfo', version: '2.2.0', apply: false]")
+        assertResolvedPlugin("org.barfuin.gradle.taskinfo", "2.2.0")
     }
 
     def "can specify plugin using argument to init with root build and settings files present"() {
@@ -93,10 +93,10 @@ class BuildInitPluginTemplatesIntegrationTest extends AbstractIntegrationSpec {
         """)
 
         when:
-        initSucceeds("org.barfuin.gradle.taskinfo:2.2.0")
+        initSucceedsWithTemplatePlugin("org.barfuin.gradle.taskinfo:2.2.0")
 
         then:
-        outputContains("Resolved plugin [id: 'org.barfuin.gradle.taskinfo', version: '2.2.0', apply: false]")
+        assertResolvedPlugin("org.barfuin.gradle.taskinfo", "2.2.0")
     }
 
     def "can specify plugin using argument to init with root build and settings KTS files present"() {
@@ -111,10 +111,10 @@ class BuildInitPluginTemplatesIntegrationTest extends AbstractIntegrationSpec {
         """)
 
         when:
-        initSucceeds("org.barfuin.gradle.taskinfo:2.2.0")
+        initSucceedsWithTemplatePlugin("org.barfuin.gradle.taskinfo:2.2.0")
 
         then:
-        outputContains("Resolved plugin [id: 'org.barfuin.gradle.taskinfo', version: '2.2.0', apply: false]")
+        assertResolvedPlugin("org.barfuin.gradle.taskinfo", "2.2.0")
     }
 
     def "can specify plugin using argument to init with root build and settings files present in multiproject build"() {
@@ -138,10 +138,10 @@ class BuildInitPluginTemplatesIntegrationTest extends AbstractIntegrationSpec {
         )
 
         when:
-        initSucceeds("org.barfuin.gradle.taskinfo:2.2.0")
+        initSucceedsWithTemplatePlugin("org.barfuin.gradle.taskinfo:2.2.0")
 
         then:
-        outputContains("Resolved plugin [id: 'org.barfuin.gradle.taskinfo', version: '2.2.0', apply: false]")
+        assertResolvedPlugin("org.barfuin.gradle.taskinfo", "2.2.0")
         // TODO: should appear exactly once, but no way to automatically verify this currently.  Looking at the output, it is true currently
     }
 
@@ -166,10 +166,10 @@ class BuildInitPluginTemplatesIntegrationTest extends AbstractIntegrationSpec {
         )
 
         when:
-        initSucceeds("org.barfuin.gradle.taskinfo:2.2.0")
+        initSucceedsWithTemplatePlugin("org.barfuin.gradle.taskinfo:2.2.0")
 
         then:
-        outputContains("Resolved plugin [id: 'org.barfuin.gradle.taskinfo', version: '2.2.0', apply: false]")
+        assertResolvedPlugin("org.barfuin.gradle.taskinfo", "2.2.0")
         // TODO: should appear exactly once, but no way to automatically verify this currently.  Looking at the output, it is true currently
     }
 
@@ -178,11 +178,12 @@ class BuildInitPluginTemplatesIntegrationTest extends AbstractIntegrationSpec {
         publishTestPlugin()
 
         when:
-        initSucceeds("org.example.myplugin:1.0")
+        initSucceedsWithTemplatePlugin("org.example.myplugin:1.0")
 
         then:
-        outputContains("Resolved plugin [id: 'org.example.myplugin', version: '1.0', apply: false]")
+        assertResolvedPlugin("org.example.myplugin", "1.0")
         outputDoesNotContain("MyPlugin applied.")
+        assertLoadedTemplate("Custom Project Type")
     }
 
     def "can specify multiple plugins using argument to init"() {
@@ -190,12 +191,13 @@ class BuildInitPluginTemplatesIntegrationTest extends AbstractIntegrationSpec {
         publishTestPlugin()
 
         when:
-        initSucceeds("org.example.myplugin:1.0,org.barfuin.gradle.taskinfo:2.2.0")
+        initSucceedsWithTemplatePlugin("org.example.myplugin:1.0,org.barfuin.gradle.taskinfo:2.2.0")
 
         then:
-        outputContains("Resolved plugin [id: 'org.example.myplugin', version: '1.0', apply: false]")
-        outputContains("Resolved plugin [id: 'org.barfuin.gradle.taskinfo', version: '2.2.0', apply: false]")
+        assertResolvedPlugin("org.example.myplugin", "1.0")
+        assertResolvedPlugin("org.barfuin.gradle.taskinfo", "2.2.0")
         outputDoesNotContain("MyPlugin applied.")
+        assertLoadedTemplate("Custom Project Type")
     }
 
     def setup() {
@@ -217,7 +219,7 @@ class BuildInitPluginTemplatesIntegrationTest extends AbstractIntegrationSpec {
         """)
     }
 
-    private void initSucceeds(String pluginsProp = null) {
+    private void initSucceedsWithTemplatePlugin(String pluginsProp = null) {
         def newProjectDir = file("new-project").with { createDir() }
         executer.inDirectory(newProjectDir)
 
@@ -241,29 +243,48 @@ class BuildInitPluginTemplatesIntegrationTest extends AbstractIntegrationSpec {
                 project.getLogger().lifecycle("MyPlugin applied.");
         """, "org.example.myplugin")
 
-        pluginBuilder.file("src/main/resources/META-INF/services/org.gradle.buildinit.templates.InitProjectSupplier") << "implementation-class=org.example.MySupplier"
-        pluginBuilder.java("org/example/MySupplier.java") << """
-            package org.example;
+        pluginBuilder.file("src/main/resources/META-INF/services/org.gradle.buildinit.templates.InitProjectSupplier") << "org.gradle.test.MySupplier\n"
+        pluginBuilder.java("org/gradle/test/MySupplier.java") << """
+            package org.gradle.test;
 
             import java.util.Collections;
             import java.util.List;
 
+            import org.gradle.buildinit.templates.InitProjectParameter;
             import org.gradle.buildinit.templates.InitProjectSpec;
             import org.gradle.buildinit.templates.InitProjectSupplier;
 
             public class MySupplier implements InitProjectSupplier {
                 @Override
                 public List<InitProjectSpec> getProjectDefinitions() {
-                    return Collections.emptyList();
+                    return Collections.singletonList(new InitProjectSpec() {
+                        @Override
+                        public String getDisplayName() {
+                            return "Custom Project Type";
+                        }
+
+                        @Override
+                        public List<InitProjectParameter> getParameters() {
+                            return Collections.emptyList();
+                        }
+                    });
                 }
             }
         """
 
-        executer.requireOwnGradleUserHomeDir("Adding new API that plugin needs") // TODO: Remove this when API is solid even that it isn't changing every test run
+        executer.requireOwnGradleUserHomeDir("Adding new API that plugin needs") // TODO: Remove this when API is solid enough that it isn't changing every test run (it slows down test running)
         def results = pluginBuilder.publishAs("org.example.myplugin:plugin:1.0", mavenRepo, executer)
 
         println()
         println "Published: '${results.getPluginModule().with { m -> m.getGroup() + ':' + m.getModule() + ':' + m.getVersion() }}'"
         println "To: '${mavenRepo.uri}'"
+    }
+
+    private void assertResolvedPlugin(String id, String version) {
+        outputContains("Resolved plugin [id: '$id', version: '$version', apply: false]")
+    }
+
+    private void assertLoadedTemplate(String templateName) {
+        outputContains("Loaded template: '" + templateName + "'")
     }
 }
