@@ -184,6 +184,9 @@ class BuildInitPluginTemplatesIntegrationTest extends AbstractIntegrationSpec {
         assertResolvedPlugin("org.example.myplugin", "1.0")
         outputDoesNotContain("MyPlugin applied.")
         assertLoadedTemplate("Custom Project Type")
+
+        // Note: If only one template is available, it is chosen by default in non-interactive mode
+        assertProjectFileGenerated("project.output", "MyGenerator created this project.")
     }
 
     def "can specify multiple plugins using argument to init"() {
@@ -198,6 +201,9 @@ class BuildInitPluginTemplatesIntegrationTest extends AbstractIntegrationSpec {
         assertResolvedPlugin("org.barfuin.gradle.taskinfo", "2.2.0")
         outputDoesNotContain("MyPlugin applied.")
         assertLoadedTemplate("Custom Project Type")
+
+        // Note: If only one template is available, it is chosen by default in non-interactive mode
+        assertProjectFileGenerated("project.output", "MyGenerator created this project.")
     }
 
     def setup() {
@@ -237,6 +243,17 @@ class BuildInitPluginTemplatesIntegrationTest extends AbstractIntegrationSpec {
     }
 
     private publishTestPlugin() {
+        PluginBuilder pluginBuilder = buildTestPlugin()
+
+        executer.requireOwnGradleUserHomeDir("Adding new API that plugin needs") // TODO: Remove this when API is solid enough that it isn't changing every test run (it slows down test running)
+        def results = pluginBuilder.publishAs("org.example.myplugin:plugin:1.0", mavenRepo, executer)
+
+        println()
+        println "Published: '${results.getPluginModule().with { m -> m.getGroup() + ':' + m.getModule() + ':' + m.getVersion() }}'"
+        println "To: '${mavenRepo.uri}'"
+    }
+
+    private PluginBuilder buildTestPlugin() {
         def pluginBuilder = new PluginBuilder(testDirectory.file("plugin"))
 
         pluginBuilder.addPluginWithCustomCode("""
@@ -244,12 +261,14 @@ class BuildInitPluginTemplatesIntegrationTest extends AbstractIntegrationSpec {
         """, "org.example.myplugin")
 
         pluginBuilder.file("src/main/resources/META-INF/services/org.gradle.buildinit.templates.InitProjectSupplier") << "org.gradle.test.MySupplier\n"
+
         pluginBuilder.java("org/gradle/test/MySupplier.java") << """
             package org.gradle.test;
 
             import java.util.Collections;
             import java.util.List;
 
+            import org.gradle.buildinit.templates.InitProjectGenerator;
             import org.gradle.buildinit.templates.InitProjectParameter;
             import org.gradle.buildinit.templates.InitProjectSpec;
             import org.gradle.buildinit.templates.InitProjectSupplier;
@@ -264,20 +283,49 @@ class BuildInitPluginTemplatesIntegrationTest extends AbstractIntegrationSpec {
                         }
 
                         @Override
-                        public List<InitProjectParameter> getParameters() {
+                        public List<InitProjectParameter<?>> getParameters() {
                             return Collections.emptyList();
                         }
                     });
                 }
+
+                @Override
+                public InitProjectGenerator getProjectGenerator() {
+                    return new MyGenerator();
+                }
             }
         """
 
-        executer.requireOwnGradleUserHomeDir("Adding new API that plugin needs") // TODO: Remove this when API is solid enough that it isn't changing every test run (it slows down test running)
-        def results = pluginBuilder.publishAs("org.example.myplugin:plugin:1.0", mavenRepo, executer)
+        pluginBuilder.java("org/gradle/test/MyGenerator.java") << """
+            package org.gradle.test;
 
-        println()
-        println "Published: '${results.getPluginModule().with { m -> m.getGroup() + ':' + m.getModule() + ':' + m.getVersion() }}'"
-        println "To: '${mavenRepo.uri}'"
+            import java.io.File;
+            import java.io.FileWriter;
+            import java.io.IOException;
+            import java.util.Collections;
+            import java.util.List;
+
+            import org.gradle.api.file.Directory;
+            import org.gradle.buildinit.templates.InitProjectConfig;
+            import org.gradle.buildinit.templates.InitProjectGenerator;
+
+            public class MyGenerator implements InitProjectGenerator {
+                @Override
+                public void generate(InitProjectConfig config, Directory location) {
+                    try {
+                        File output = location.file("project.output").getAsFile();
+                        output.createNewFile();
+                        FileWriter writer = new FileWriter(output);
+                        writer.write("MyGenerator created this project.");
+                        writer.close();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+        """
+
+        return pluginBuilder
     }
 
     private void assertResolvedPlugin(String id, String version) {
@@ -286,5 +334,11 @@ class BuildInitPluginTemplatesIntegrationTest extends AbstractIntegrationSpec {
 
     private void assertLoadedTemplate(String templateName) {
         outputContains("Loaded template: '" + templateName + "'")
+    }
+
+    private void assertProjectFileGenerated(String fileName, String content) {
+        def projectFile = file("new-project/$fileName")
+        assert projectFile.exists(), "Project file '$fileName' does not exist."
+        assert projectFile.text == content
     }
 }

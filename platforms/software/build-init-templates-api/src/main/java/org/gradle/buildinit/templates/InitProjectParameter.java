@@ -21,15 +21,16 @@ import org.gradle.api.Incubating;
 /**
  * Represents a parameter that can be provided to a project template.
  *
- * @since 8.10
+ * @param <T> The type of this parameter
+ * @since 8.11
  */
 @Incubating
-public interface InitProjectParameter {
+public interface InitProjectParameter<T> {
     /**
      * Returns the name of the parameter.
      *
      * @return the name of the parameter
-     * @since 8.10
+     * @since 8.11
      */
     String getName();
 
@@ -37,7 +38,7 @@ public interface InitProjectParameter {
      * Returns the type of the parameter.
      *
      * @return the type of the parameter
-     * @since 8.10
+     * @since 8.11
      */
-    Class<?> getParameterType();
+    T getParameterType();
 }

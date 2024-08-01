@@ -23,7 +23,7 @@ import java.util.List;
 /**
  * Represents a project template.
  *
- * @since 8.10
+ * @since 8.11
  */
 @Incubating
 public interface InitProjectSpec {
@@ -31,7 +31,7 @@ public interface InitProjectSpec {
      * Returns the display name of the project template.
      *
      * @return the display name of the project template
-     * @since 8.10
+     * @since 8.11
      */
     String getDisplayName();
 
@@ -39,7 +39,7 @@ public interface InitProjectSpec {
      * Returns the description of the project template.
      *
      * @return the description of the project template
-     * @since 8.10
+     * @since 8.11
      */
-    List<InitProjectParameter> getParameters();
+    List<InitProjectParameter<?>> getParameters();
 }

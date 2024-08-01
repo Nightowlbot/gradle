@@ -18,28 +18,29 @@ package org.gradle.buildinit.templates;
 
 import org.gradle.api.Incubating;
 
-import java.util.List;
+import java.util.Map;
 
 /**
- * Supplies project templates.
+ * Represents a template that has been configured with arguments for all its {@link InitProjectParameter}s.
  *
+ * @implSpec Implementations must be immutable.
  * @since 8.11
  */
 @Incubating
-public interface InitProjectSupplier {
+public interface InitProjectConfig {
     /**
-     * Returns the project templates this supplier provides.
+     * Returns the project type of the template.
      *
-     * @return the project templates
+     * @return the project type of the template
      * @since 8.11
      */
-    List<InitProjectSpec> getProjectDefinitions();
+    InitProjectSpec getProjectType();
 
     /**
-     * Returns the project generator for the project types provided by this supplier.
+     * Returns the configured parameters for the template.
      *
-     * @return project generator
+     * @return the parameters that have been configured for the template
      * @since 8.11
      */
-    InitProjectGenerator getProjectGenerator();
+    Map<InitProjectParameter<?>, Object> getArguments();
 }

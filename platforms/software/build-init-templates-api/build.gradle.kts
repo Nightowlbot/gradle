@@ -21,5 +21,6 @@ plugins {
 description = "Contains code plugins can use to supply templates to the Build Init plugin"
 
 dependencies {
-    api(project(":stdlib-java-extensions"))
+    api(projects.coreApi)
+    api(projects.stdlibJavaExtensions)
 }

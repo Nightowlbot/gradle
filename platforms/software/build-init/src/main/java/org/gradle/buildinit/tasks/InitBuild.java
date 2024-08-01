@@ -50,7 +50,11 @@ import org.gradle.buildinit.plugins.internal.modifiers.BuildInitTestFramework;
 import org.gradle.buildinit.plugins.internal.modifiers.ComponentType;
 import org.gradle.buildinit.plugins.internal.modifiers.Language;
 import org.gradle.buildinit.plugins.internal.modifiers.ModularizationOption;
+import org.gradle.buildinit.templates.InitProjectConfig;
+import org.gradle.buildinit.templates.InitProjectGenerator;
+import org.gradle.buildinit.templates.InitProjectParameter;
 import org.gradle.buildinit.templates.InitProjectSpec;
+import org.gradle.buildinit.templates.internal.AvailableTemplates;
 import org.gradle.buildinit.templates.internal.TemplateLoader;
 import org.gradle.internal.instrumentation.api.annotations.NotToBeReplacedByLazyProperty;
 import org.gradle.internal.instrumentation.api.annotations.ToBeReplacedByLazyProperty;
@@ -59,15 +63,18 @@ import org.gradle.jvm.toolchain.JavaLanguageVersion;
 import org.gradle.util.GradleVersion;
 import org.gradle.work.DisableCachingByDefault;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.lang.model.SourceVersion;
 import java.io.File;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Function;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 
@@ -282,18 +289,41 @@ public abstract class InitBuild extends DefaultTask {
     @TaskAction
     public void setupProjectLayout() {
         UserInputHandler inputHandler = getEffectiveInputHandler();
-        List<InitProjectSpec> templates = new TemplateLoader((ProjectInternal) getProject()).loadTemplates();
-        if (templates.isEmpty()) {
-            doProceduralProjectGeneration(inputHandler);
+        AvailableTemplates availableTemplates = new TemplateLoader((ProjectInternal) getProject()).loadTemplates();
+        if (availableTemplates.areAvailable()) {
+            doTemplateProjectGeneration(inputHandler, availableTemplates);
         } else {
-            doTemplateProjectGeneration(inputHandler, templates);
+            doProceduralProjectGeneration(inputHandler);
         }
     }
 
-    private void doTemplateProjectGeneration(UserInputHandler inputHandler, List<InitProjectSpec> templates) {
-        assert inputHandler != null; // TODO: the unused variable warning is trash
-        // TODO: change to info/debug
-        templates.forEach(template -> getLogger().warn("Loaded template: '" + template.getDisplayName() + "'"));
+    private void doTemplateProjectGeneration(UserInputHandler inputHandler, AvailableTemplates availableTemplates) {
+        Function<UserQuestions, InitProjectConfig> templateSelector = buildTemplateSelector(availableTemplates);
+        InitProjectConfig config = inputHandler.askUser(templateSelector).get();
+        InitProjectGenerator generator = availableTemplates.getProjectGenerator(config.getProjectType());
+        generator.generate(config, projectDir);
+    }
+
+    private Function<UserQuestions, InitProjectConfig> buildTemplateSelector(AvailableTemplates availableTemplates) {
+        return userQuestions -> {
+            InitProjectSpec template = userQuestions.choice("Select project type", availableTemplates.getAvailableTemplates())
+                .renderUsing(InitProjectSpec::getDisplayName)
+                .ask();
+
+            return new InitProjectConfig() {
+                @Override
+                @Nonnull
+                public InitProjectSpec getProjectType() {
+                    return template;
+                }
+
+                @Override
+                @Nonnull
+                public Map<InitProjectParameter<?>, Object> getArguments() {
+                    return Collections.emptyMap();
+                }
+            };
+        };
     }
 
     private void doProceduralProjectGeneration(UserInputHandler inputHandler) {

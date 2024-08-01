@@ -17,26 +17,38 @@
 package org.gradle.buildinit.templates.internal;
 
 import org.gradle.api.internal.project.ProjectInternal;
+import org.gradle.api.logging.Logger;
+import org.gradle.buildinit.templates.InitProjectGenerator;
 import org.gradle.buildinit.templates.InitProjectSpec;
 import org.gradle.buildinit.templates.InitProjectSupplier;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.ServiceLoader;
 
-public class TemplateLoader {
-    private final ClassLoader classLoader;
+public final class TemplateLoader {
+    /**
+     * We can't load using the current thread here to get the classes loaded by plugins,
+     * we have to load from the project's classloader.
+     */
+    private final ClassLoader projectClassLoader;
+    private final Logger logger;
 
     public TemplateLoader(ProjectInternal project) {
-        this.classLoader = project.getClassLoaderScope().getLocalClassLoader();
+        this.projectClassLoader = project.getClassLoaderScope().getLocalClassLoader();
+        this.logger = project.getLogger();
     }
 
-    public List<InitProjectSpec> loadTemplates() {
-        List<InitProjectSpec> templates = new ArrayList<>();
-        // Load from the current thread to get the classes loaded by plugins, not the thread where InitProjectSupplier was loaded
-        for (InitProjectSupplier supplier : ServiceLoader.load(InitProjectSupplier.class, classLoader)) {
-            templates.addAll(supplier.getProjectDefinitions());
-        }
-        return templates;
+    public AvailableTemplates loadTemplates() {
+        Map<InitProjectGenerator, List<InitProjectSpec>> templatesBySource = new HashMap<>();
+
+        ServiceLoader.load(InitProjectSupplier.class, projectClassLoader).forEach(supplier -> {
+            List<InitProjectSpec> templates = supplier.getProjectDefinitions();
+            templates.forEach(template -> logger.warn("Loaded template: '{}'", template.getDisplayName())); // TODO: Reduce this from warn to debug/info
+            templatesBySource.put(supplier.getProjectGenerator(), templates);
+        });
+
+        return new AvailableTemplates(templatesBySource);
     }
 }

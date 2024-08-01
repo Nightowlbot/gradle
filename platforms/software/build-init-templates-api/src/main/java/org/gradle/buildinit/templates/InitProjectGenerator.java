@@ -17,29 +17,21 @@
 package org.gradle.buildinit.templates;
 
 import org.gradle.api.Incubating;
-
-import java.util.List;
+import org.gradle.api.file.Directory;
 
 /**
- * Supplies project templates.
+ * Generates a project from a configured template.
  *
  * @since 8.11
  */
 @Incubating
-public interface InitProjectSupplier {
+public interface InitProjectGenerator {
     /**
-     * Returns the project templates this supplier provides.
+     * Generates a project from the given template configuration.
      *
-     * @return the project templates
+     * @param config the configuration for the project to generate
+     * @param location the directory to generate the project in
      * @since 8.11
      */
-    List<InitProjectSpec> getProjectDefinitions();
-
-    /**
-     * Returns the project generator for the project types provided by this supplier.
-     *
-     * @return project generator
-     * @since 8.11
-     */
-    InitProjectGenerator getProjectGenerator();
+    void generate(InitProjectConfig config, Directory location);
 }
