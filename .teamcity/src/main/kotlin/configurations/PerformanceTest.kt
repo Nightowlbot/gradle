@@ -83,7 +83,7 @@ class PerformanceTest(
                         workingDir = os.perfTestWorkingDir
                         gradleParams = (
                             performanceTestCommandLine(
-                                "${if (repeatIndex == 0) "clean" else ""} ${performanceTestTaskNames.joinToString(" ") { "$it --channel %performance.channel% ${type.extraParameters}" }}",
+                                "${if (repeatIndex == 0) "clean" else ""} ${performanceTestTaskNames.joinToString(" ") { "$it --warmups 1 --runs 1 --channel %performance.channel% ${type.extraParameters}" }}",
                                 "%performance.baselines%",
                                 extraParameters,
                                 os
