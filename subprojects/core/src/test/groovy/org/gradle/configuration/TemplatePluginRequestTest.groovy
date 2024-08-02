@@ -34,7 +34,7 @@ class TemplatePluginRequestTest extends Specification {
 
         then:
         def exception = thrown(IllegalArgumentException)
-        exception.message == "Invalid plugin spec: '$coords' found in System Property 'org.gradle.buildinit.templates.plugins'. Expected format is 'id:version'."
+        exception.message == "Invalid plugin spec: '$coords' found in System Property 'org.gradle.internal.buildinit.templates.plugins'. Expected format is 'id:version'."
 
         where:
         coords << ["", " ", "nonsense", ":more:nonsense", ":incorrect", "incorrect:", ":", "org.gradle:1.0.0:1.0.0"]

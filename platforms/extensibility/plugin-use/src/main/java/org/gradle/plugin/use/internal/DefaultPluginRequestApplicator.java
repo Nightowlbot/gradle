@@ -187,8 +187,7 @@ public class DefaultPluginRequestApplicator implements PluginRequestApplicator {
         PluginResolutionResult result;
         try {
             result = resolver.resolve(request);
-            // TODO: Just for testing, need to switch this to info/debug and adjust BuildInitPluginTemplatesIntegrationTest (at least)
-            LOGGER.warn("Resolved plugin {}", request.getDisplayName());
+            LOGGER.info("Resolved plugin {}", request.getDisplayName());
         } catch (Exception e) {
             throw new LocationAwareException(
                 new GradleException(String.format("Error resolving plugin %s", request.getDisplayName()), e),

@@ -69,7 +69,7 @@ class TemplatePluginHandlerTest extends Specification {
 
         then:
         def exception = thrown(IllegalArgumentException)
-        exception.message == "Invalid plugin spec: '$prop' found in System Property 'org.gradle.buildinit.templates.plugins'. Expected format is 'id:version'."
+        exception.message == "Invalid plugin spec: '$prop' found in System Property 'org.gradle.internal.buildinit.templates.plugins'. Expected format is 'id:version'."
 
         where:
         prop << ["", " ", "nonsense"]
@@ -84,6 +84,6 @@ class TemplatePluginHandlerTest extends Specification {
 
         then:
         def exception = thrown(IllegalArgumentException)
-        exception.message == "Invalid plugin spec: 'invalid' found in System Property 'org.gradle.buildinit.templates.plugins'. Expected format is 'id:version'."
+        exception.message == "Invalid plugin spec: 'invalid' found in System Property 'org.gradle.internal.buildinit.templates.plugins'. Expected format is 'id:version'."
     }
 }

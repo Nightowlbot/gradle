@@ -16,14 +16,14 @@
 
 package org.gradle.buildinit.templates.internal
 
+import org.gradle.buildinit.plugins.TestsInitTemplatePlugin
 import org.gradle.integtests.fixtures.AbstractIntegrationSpec
 import org.gradle.plugin.management.internal.template.TemplatePluginHandler
-import org.gradle.test.fixtures.plugin.PluginBuilder
 
-class BuildInitPluginTemplatesIntegrationTest extends AbstractIntegrationSpec {
+class BuildInitPluginTemplatesIntegrationTest extends AbstractIntegrationSpec implements TestsInitTemplatePlugin {
     def "can specify 3rd party plugin using argument to init"() {
         when:
-        initSucceedsWithTemplatePlugin("org.barfuin.gradle.taskinfo:2.2.0")
+        initSucceedsWithTemplatePlugins("org.barfuin.gradle.taskinfo:2.2.0")
 
         then:
         assertResolvedPlugin("org.barfuin.gradle.taskinfo", "2.2.0")
@@ -37,7 +37,7 @@ class BuildInitPluginTemplatesIntegrationTest extends AbstractIntegrationSpec {
         """)
 
         when:
-        initSucceedsWithTemplatePlugin("org.barfuin.gradle.taskinfo:2.2.0")
+        initSucceedsWithTemplatePlugins("org.barfuin.gradle.taskinfo:2.2.0")
 
         then:
         assertResolvedPlugin("org.barfuin.gradle.taskinfo", "2.2.0")
@@ -51,7 +51,7 @@ class BuildInitPluginTemplatesIntegrationTest extends AbstractIntegrationSpec {
         """)
 
         when:
-        initSucceedsWithTemplatePlugin("org.barfuin.gradle.taskinfo:2.2.0")
+        initSucceedsWithTemplatePlugins("org.barfuin.gradle.taskinfo:2.2.0")
 
         then:
         assertResolvedPlugin("org.barfuin.gradle.taskinfo", "2.2.0")
@@ -63,7 +63,7 @@ class BuildInitPluginTemplatesIntegrationTest extends AbstractIntegrationSpec {
         """)
 
         when:
-        initSucceedsWithTemplatePlugin("org.barfuin.gradle.taskinfo:2.2.0")
+        initSucceedsWithTemplatePlugins("org.barfuin.gradle.taskinfo:2.2.0")
 
         then:
         assertResolvedPlugin("org.barfuin.gradle.taskinfo", "2.2.0")
@@ -75,7 +75,7 @@ class BuildInitPluginTemplatesIntegrationTest extends AbstractIntegrationSpec {
         """)
 
         when:
-        initSucceedsWithTemplatePlugin("org.barfuin.gradle.taskinfo:2.2.0")
+        initSucceedsWithTemplatePlugins("org.barfuin.gradle.taskinfo:2.2.0")
 
         then:
         assertResolvedPlugin("org.barfuin.gradle.taskinfo", "2.2.0")
@@ -93,7 +93,7 @@ class BuildInitPluginTemplatesIntegrationTest extends AbstractIntegrationSpec {
         """)
 
         when:
-        initSucceedsWithTemplatePlugin("org.barfuin.gradle.taskinfo:2.2.0")
+        initSucceedsWithTemplatePlugins("org.barfuin.gradle.taskinfo:2.2.0")
 
         then:
         assertResolvedPlugin("org.barfuin.gradle.taskinfo", "2.2.0")
@@ -111,7 +111,7 @@ class BuildInitPluginTemplatesIntegrationTest extends AbstractIntegrationSpec {
         """)
 
         when:
-        initSucceedsWithTemplatePlugin("org.barfuin.gradle.taskinfo:2.2.0")
+        initSucceedsWithTemplatePlugins("org.barfuin.gradle.taskinfo:2.2.0")
 
         then:
         assertResolvedPlugin("org.barfuin.gradle.taskinfo", "2.2.0")
@@ -138,7 +138,7 @@ class BuildInitPluginTemplatesIntegrationTest extends AbstractIntegrationSpec {
         )
 
         when:
-        initSucceedsWithTemplatePlugin("org.barfuin.gradle.taskinfo:2.2.0")
+        initSucceedsWithTemplatePlugins("org.barfuin.gradle.taskinfo:2.2.0")
 
         then:
         assertResolvedPlugin("org.barfuin.gradle.taskinfo", "2.2.0")
@@ -166,7 +166,7 @@ class BuildInitPluginTemplatesIntegrationTest extends AbstractIntegrationSpec {
         )
 
         when:
-        initSucceedsWithTemplatePlugin("org.barfuin.gradle.taskinfo:2.2.0")
+        initSucceedsWithTemplatePlugins("org.barfuin.gradle.taskinfo:2.2.0")
 
         then:
         assertResolvedPlugin("org.barfuin.gradle.taskinfo", "2.2.0")
@@ -178,15 +178,16 @@ class BuildInitPluginTemplatesIntegrationTest extends AbstractIntegrationSpec {
         publishTestPlugin()
 
         when:
-        initSucceedsWithTemplatePlugin("org.example.myplugin:1.0")
+        initSucceedsWithTemplatePlugins("org.example.myplugin:1.0")
 
         then:
         assertResolvedPlugin("org.example.myplugin", "1.0")
         outputDoesNotContain("MyPlugin applied.")
         assertLoadedTemplate("Custom Project Type")
+        assertLoadedTemplate("Custom Project Type 2")
 
-        // Note: If only one template is available, it is chosen by default in non-interactive mode
-        assertProjectFileGenerated("project.output", "MyGenerator created this project.")
+        // Note: If running in non-interactive mode, first template is used
+        assertProjectFileGenerated("project.output", "MyGenerator created this Custom Project Type project.")
     }
 
     def "can specify multiple plugins using argument to init"() {
@@ -194,38 +195,20 @@ class BuildInitPluginTemplatesIntegrationTest extends AbstractIntegrationSpec {
         publishTestPlugin()
 
         when:
-        initSucceedsWithTemplatePlugin("org.example.myplugin:1.0,org.barfuin.gradle.taskinfo:2.2.0")
+        initSucceedsWithTemplatePlugins("org.example.myplugin:1.0,org.barfuin.gradle.taskinfo:2.2.0")
 
         then:
         assertResolvedPlugin("org.example.myplugin", "1.0")
         assertResolvedPlugin("org.barfuin.gradle.taskinfo", "2.2.0")
         outputDoesNotContain("MyPlugin applied.")
         assertLoadedTemplate("Custom Project Type")
+        assertLoadedTemplate("Custom Project Type 2")
 
-        // Note: If only one template is available, it is chosen by default in non-interactive mode
-        assertProjectFileGenerated("project.output", "MyGenerator created this project.")
+        // Note: If running in non-interactive mode, first template is used
+        assertProjectFileGenerated("project.output", "MyGenerator created this Custom Project Type project.")
     }
 
-    def setup() {
-        setupRepositoriesViaInit()
-    }
-
-    private void setupRepositoriesViaInit() {
-        groovyFile("init.gradle", """
-            settingsEvaluated { settings ->
-                settings.pluginManagement {
-                    repositories {
-                        maven {
-                            url '${mavenRepo.uri}'
-                        }
-                        gradlePluginPortal()
-                    }
-                }
-            }
-        """)
-    }
-
-    private void initSucceedsWithTemplatePlugin(String pluginsProp = null) {
+    private void initSucceedsWithTemplatePlugins(String pluginsProp = null) {
         def newProjectDir = file("new-project").with { createDir() }
         executer.inDirectory(newProjectDir)
 
@@ -234,111 +217,12 @@ class BuildInitPluginTemplatesIntegrationTest extends AbstractIntegrationSpec {
             args << "-D${TemplatePluginHandler.TEMPLATE_PLUGINS_PROP}=$pluginsProp".toString()
         }
         args << "--overwrite"
+        args << "--info"
         args << "--init-script" << "../init.gradle"
 
         println "Executing: '${args.join(" ")}')"
         println "Working Dir: '$newProjectDir'"
 
         succeeds args
-    }
-
-    private publishTestPlugin() {
-        PluginBuilder pluginBuilder = buildTestPlugin()
-
-        executer.requireOwnGradleUserHomeDir("Adding new API that plugin needs") // TODO: Remove this when API is solid enough that it isn't changing every test run (it slows down test running)
-        def results = pluginBuilder.publishAs("org.example.myplugin:plugin:1.0", mavenRepo, executer)
-
-        println()
-        println "Published: '${results.getPluginModule().with { m -> m.getGroup() + ':' + m.getModule() + ':' + m.getVersion() }}'"
-        println "To: '${mavenRepo.uri}'"
-    }
-
-    private PluginBuilder buildTestPlugin() {
-        def pluginBuilder = new PluginBuilder(testDirectory.file("plugin"))
-
-        pluginBuilder.addPluginWithCustomCode("""
-                project.getLogger().lifecycle("MyPlugin applied.");
-        """, "org.example.myplugin")
-
-        pluginBuilder.file("src/main/resources/META-INF/services/org.gradle.buildinit.templates.InitProjectSupplier") << "org.gradle.test.MySupplier\n"
-
-        pluginBuilder.java("org/gradle/test/MySupplier.java") << """
-            package org.gradle.test;
-
-            import java.util.Collections;
-            import java.util.List;
-
-            import org.gradle.buildinit.templates.InitProjectGenerator;
-            import org.gradle.buildinit.templates.InitProjectParameter;
-            import org.gradle.buildinit.templates.InitProjectSpec;
-            import org.gradle.buildinit.templates.InitProjectSupplier;
-
-            public class MySupplier implements InitProjectSupplier {
-                @Override
-                public List<InitProjectSpec> getProjectDefinitions() {
-                    return Collections.singletonList(new InitProjectSpec() {
-                        @Override
-                        public String getDisplayName() {
-                            return "Custom Project Type";
-                        }
-
-                        @Override
-                        public List<InitProjectParameter<?>> getParameters() {
-                            return Collections.emptyList();
-                        }
-                    });
-                }
-
-                @Override
-                public InitProjectGenerator getProjectGenerator() {
-                    return new MyGenerator();
-                }
-            }
-        """
-
-        pluginBuilder.java("org/gradle/test/MyGenerator.java") << """
-            package org.gradle.test;
-
-            import java.io.File;
-            import java.io.FileWriter;
-            import java.io.IOException;
-            import java.util.Collections;
-            import java.util.List;
-
-            import org.gradle.api.file.Directory;
-            import org.gradle.buildinit.templates.InitProjectConfig;
-            import org.gradle.buildinit.templates.InitProjectGenerator;
-
-            public class MyGenerator implements InitProjectGenerator {
-                @Override
-                public void generate(InitProjectConfig config, Directory location) {
-                    try {
-                        File output = location.file("project.output").getAsFile();
-                        output.createNewFile();
-                        FileWriter writer = new FileWriter(output);
-                        writer.write("MyGenerator created this project.");
-                        writer.close();
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-            }
-        """
-
-        return pluginBuilder
-    }
-
-    private void assertResolvedPlugin(String id, String version) {
-        outputContains("Resolved plugin [id: '$id', version: '$version', apply: false]")
-    }
-
-    private void assertLoadedTemplate(String templateName) {
-        outputContains("Loaded template: '" + templateName + "'")
-    }
-
-    private void assertProjectFileGenerated(String fileName, String content) {
-        def projectFile = file("new-project/$fileName")
-        assert projectFile.exists(), "Project file '$fileName' does not exist."
-        assert projectFile.text == content
     }
 }

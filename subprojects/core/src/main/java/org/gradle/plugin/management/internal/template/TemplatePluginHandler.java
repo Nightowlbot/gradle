@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 
 @NonNullApi
 public final class TemplatePluginHandler {
-    public static final String TEMPLATE_PLUGINS_PROP = "org.gradle.internal.buildinit.template.plugins";
+    public static final String TEMPLATE_PLUGINS_PROP = "org.gradle.internal.buildinit.templates.plugins";
 
     public static PluginRequests getTemplatePlugins() {
         String propValue = System.getProperty(TEMPLATE_PLUGINS_PROP);
