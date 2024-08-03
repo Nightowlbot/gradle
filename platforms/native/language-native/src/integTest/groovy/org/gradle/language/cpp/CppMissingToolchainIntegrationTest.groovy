@@ -27,7 +27,6 @@ import org.gradle.nativeplatform.fixtures.app.CppCompilerDetectingTestApp
 import org.junit.Assume
 
 class CppMissingToolchainIntegrationTest extends AbstractIntegrationSpec implements HostPlatform {
-    @ToBeFixedForConfigurationCache
     def "user receives reasonable error message when no tool chains are available"() {
         given:
         buildFile << """
