@@ -89,6 +89,7 @@ public abstract class InitBuild extends DefaultTask {
     static final int MINIMUM_VERSION_SUPPORTED_BY_FOOJAY_API = 7;
     static final int DEFAULT_JAVA_VERSION = 21;
 
+    private final AvailableTemplates availableTemplates = new TemplateLoader((ProjectInternal) getProject()).loadTemplates();
     private final Directory projectDir = getProject().getLayout().getProjectDirectory();
     private String type;
     private final Property<Boolean> splitProject = getProject().getObjects().property(Boolean.class);
@@ -289,7 +290,6 @@ public abstract class InitBuild extends DefaultTask {
     @TaskAction
     public void setupProjectLayout() {
         UserInputHandler inputHandler = getEffectiveInputHandler();
-        AvailableTemplates availableTemplates = new TemplateLoader((ProjectInternal) getProject()).loadTemplates();
         if (availableTemplates.areAvailable()) {
             doTemplateProjectGeneration(inputHandler, availableTemplates);
         } else {
