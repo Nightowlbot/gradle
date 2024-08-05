@@ -63,7 +63,6 @@ import org.gradle.jvm.toolchain.JavaLanguageVersion;
 import org.gradle.util.GradleVersion;
 import org.gradle.work.DisableCachingByDefault;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.lang.model.SourceVersion;
@@ -290,18 +289,23 @@ public abstract class InitBuild extends DefaultTask {
     @TaskAction
     public void setupProjectLayout() {
         UserInputHandler inputHandler = getEffectiveInputHandler();
-        if (availableTemplates.areAvailable()) {
-            doTemplateProjectGeneration(inputHandler, availableTemplates);
+        if (shouldUseTemplate(inputHandler)) {
+            doTemplateProjectGeneration(inputHandler);
         } else {
             doProceduralProjectGeneration(inputHandler);
         }
     }
 
-    private void doTemplateProjectGeneration(UserInputHandler inputHandler, AvailableTemplates availableTemplates) {
+    private boolean shouldUseTemplate(UserInputHandler inputHandler) {
+        return availableTemplates.areAvailable() && inputHandler.askUser(uq -> uq.askBooleanQuestion("Templates found.  Do you want to generate a project using a template?", true)).get();
+    }
+
+    private void doTemplateProjectGeneration(UserInputHandler inputHandler) {
         Function<UserQuestions, InitProjectConfig> templateSelector = buildTemplateSelector(availableTemplates);
         InitProjectConfig config = inputHandler.askUser(templateSelector).get();
         InitProjectGenerator generator = availableTemplates.getProjectGenerator(config.getProjectType());
         generator.generate(config, projectDir);
+        generateWrapper();
     }
 
     private Function<UserQuestions, InitProjectConfig> buildTemplateSelector(AvailableTemplates availableTemplates) {
@@ -312,13 +316,11 @@ public abstract class InitBuild extends DefaultTask {
 
             return new InitProjectConfig() {
                 @Override
-                @Nonnull
                 public InitProjectSpec getProjectType() {
                     return template;
                 }
 
                 @Override
-                @Nonnull
                 public Map<InitProjectParameter<?>, Object> getArguments() {
                     return Collections.emptyMap();
                 }

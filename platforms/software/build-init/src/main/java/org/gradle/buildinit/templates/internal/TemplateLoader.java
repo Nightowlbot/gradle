@@ -45,7 +45,7 @@ public final class TemplateLoader {
 
         ServiceLoader.load(InitProjectSupplier.class, projectClassLoader).forEach(supplier -> {
             List<InitProjectSpec> templates = supplier.getProjectDefinitions();
-            templates.forEach(template -> logger.warn("Loaded template: '{}', supplied by: '{}', generated via: '{}'", template.getDisplayName(), supplier.getClass().getName(), supplier.getProjectGenerator().getClass().getName())); // TODO: Reduce this from warn to debug/info
+            templates.forEach(template -> logger.info("Loaded template: '{}', supplied by: '{}', generated via: '{}'", template.getDisplayName(), supplier.getClass().getName(), supplier.getProjectGenerator().getClass().getName()));
             templatesBySource.put(supplier.getProjectGenerator(), templates);
         });
 

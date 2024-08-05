@@ -39,6 +39,9 @@ trait TestsInitTemplatePlugin {
     }
 
     void publishTestPlugin() {
+        def pluginProjectDir = file("plugin").with { createDir() }
+        executer.usingProjectDirectory(pluginProjectDir)
+
         PluginBuilder pluginBuilder = buildTestPlugin()
 
         executer.requireOwnGradleUserHomeDir("Adding new API that plugin needs") // TODO: Remove this when API is solid enough that it isn't changing every test run (it slows down test running)

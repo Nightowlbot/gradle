@@ -59,16 +59,23 @@ abstract class AbstractInitIntegrationSpec extends AbstractIntegrationSpec {
         assertNoDefinedBuild(targetDir)
     }
 
-    void assertTestPassed(String className, String name) {
+    protected void assertTestPassed(String className, String name) {
         def result = new DefaultTestExecutionResult(subprojectDir)
         result.assertTestClassesExecuted(className)
         result.testClass(className).assertTestPassed(name)
     }
 
-    void assertFunctionalTestPassed(String className, String name) {
+    protected void assertFunctionalTestPassed(String className, String name) {
         def result = new DefaultTestExecutionResult(subprojectDir, 'build', '', '', 'functionalTest')
         result.assertTestClassesExecuted(className)
         result.testClass(className).assertTestPassed(name)
+    }
+
+    protected void assertWrapperGenerated() {
+        targetDir.file("gradlew").assertIsFile()
+        targetDir.file("gradlew.bat").assertIsFile()
+        targetDir.file("gradle/wrapper/gradle-wrapper.jar").assertIsFile()
+        targetDir.file("gradle/wrapper/gradle-wrapper.properties").assertIsFile()
     }
 
     protected void commonFilesGenerated(BuildInitDsl scriptDsl, dslFixture = dslFixtureFor(scriptDsl)) {
@@ -130,5 +137,4 @@ abstract class AbstractInitIntegrationSpec extends AbstractIntegrationSpec {
             assertThat(scriptText, not(containsString("Use JCenter for resolving dependencies.")))
         }
     }
-
 }

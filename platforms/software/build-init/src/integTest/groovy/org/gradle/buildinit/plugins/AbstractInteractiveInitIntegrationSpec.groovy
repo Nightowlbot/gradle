@@ -19,7 +19,7 @@ package org.gradle.buildinit.plugins
 import org.gradle.integtests.fixtures.executer.ExecutionResult
 import org.gradle.integtests.fixtures.executer.GradleHandle
 
-abstract class AbstractInteractiveInitIntegrationSpec extends AbstractInitIntegrationSpec{
+abstract class AbstractInteractiveInitIntegrationSpec extends AbstractInitIntegrationSpec {
     def buildTypePrompt = "Select type of build to generate:"
     def dslPrompt = "Select build script DSL:"
     def incubatingPrompt = "Generate build using new APIs and behavior (some features may change in the next minor release)?"

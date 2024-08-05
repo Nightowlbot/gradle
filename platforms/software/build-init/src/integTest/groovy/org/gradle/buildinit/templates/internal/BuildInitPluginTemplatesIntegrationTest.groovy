@@ -16,11 +16,11 @@
 
 package org.gradle.buildinit.templates.internal
 
+import org.gradle.buildinit.plugins.AbstractInitIntegrationSpec
 import org.gradle.buildinit.plugins.TestsInitTemplatePlugin
-import org.gradle.integtests.fixtures.AbstractIntegrationSpec
 import org.gradle.plugin.management.internal.template.TemplatePluginHandler
 
-class BuildInitPluginTemplatesIntegrationTest extends AbstractIntegrationSpec implements TestsInitTemplatePlugin {
+class BuildInitPluginTemplatesIntegrationTest extends AbstractInitIntegrationSpec implements TestsInitTemplatePlugin {
     def "can specify 3rd party plugin using argument to init"() {
         when:
         initSucceedsWithTemplatePlugins("org.barfuin.gradle.taskinfo:2.2.0")
@@ -188,6 +188,7 @@ class BuildInitPluginTemplatesIntegrationTest extends AbstractIntegrationSpec im
 
         // Note: If running in non-interactive mode, first template is used
         assertProjectFileGenerated("project.output", "MyGenerator created this Custom Project Type project.")
+        assertWrapperGenerated()
     }
 
     def "can specify multiple plugins using argument to init"() {
@@ -206,11 +207,12 @@ class BuildInitPluginTemplatesIntegrationTest extends AbstractIntegrationSpec im
 
         // Note: If running in non-interactive mode, first template is used
         assertProjectFileGenerated("project.output", "MyGenerator created this Custom Project Type project.")
+        assertWrapperGenerated()
     }
 
     private void initSucceedsWithTemplatePlugins(String pluginsProp = null) {
         def newProjectDir = file("new-project").with { createDir() }
-        executer.inDirectory(newProjectDir)
+        targetDir = newProjectDir
 
         def args = ["init"]
         if (pluginsProp) {
@@ -224,5 +226,10 @@ class BuildInitPluginTemplatesIntegrationTest extends AbstractIntegrationSpec im
         println "Working Dir: '$newProjectDir'"
 
         succeeds args
+    }
+
+    @Override
+    String subprojectName() {
+        return "app"
     }
 }
