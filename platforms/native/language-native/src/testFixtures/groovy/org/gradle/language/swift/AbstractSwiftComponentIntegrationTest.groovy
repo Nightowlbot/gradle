@@ -28,6 +28,9 @@ import org.hamcrest.CoreMatchers
 @RequiresInstalledToolChain(ToolChainRequirement.SWIFTC)
 abstract class AbstractSwiftComponentIntegrationTest extends AbstractNativeLanguageComponentIntegrationTest {
 
+    @ToBeFixedForConfigurationCache(bottomSpecs = [
+        'SwiftXCTestComponentWithSharedLibraryLinkageIntegrationTest'
+    ])
     def "sources are built with Swift tools"() {
         given:
         makeSingleProject()

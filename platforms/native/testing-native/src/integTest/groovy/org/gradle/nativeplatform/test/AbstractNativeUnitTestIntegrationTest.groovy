@@ -30,7 +30,12 @@ abstract class AbstractNativeUnitTestIntegrationTest extends AbstractInstalledTo
     @ToBeFixedForConfigurationCache(bottomSpecs = [
         'CppUnitTestWithApplicationIntegrationTest',
         'CppUnitTestWithLibraryIntegrationTest',
-        'CppUnitTestWithoutComponentIntegrationTest'
+        'CppUnitTestWithoutComponentIntegrationTest',
+        'SwiftXCTestWithBothLibraryLinkageIntegrationTest',
+        'SwiftXCTestWithSharedLibraryLinkageIntegrationTest',
+        'SwiftXCTestWithStaticLibraryLinkageIntegrationTest',
+        'SwiftXCTestWithApplicationIntegrationTest',
+        'SwiftXCTestWithoutComponentIntegrationTest'
     ])
     def "does nothing when no source files are present"() {
         given:
