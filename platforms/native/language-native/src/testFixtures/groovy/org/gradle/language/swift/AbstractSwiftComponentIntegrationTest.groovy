@@ -16,6 +16,7 @@
 
 package org.gradle.language.swift
 
+import org.gradle.integtests.fixtures.ToBeFixedForConfigurationCache
 import org.gradle.language.AbstractNativeLanguageComponentIntegrationTest
 import org.gradle.nativeplatform.OperatingSystemFamily
 import org.gradle.nativeplatform.fixtures.RequiresInstalledToolChain
@@ -93,6 +94,11 @@ abstract class AbstractSwiftComponentIntegrationTest extends AbstractNativeLangu
         result.assertTasksExecuted(tasksToAssembleDevelopmentBinaryOfComponentUnderTest, ":$taskNameToAssembleDevelopmentBinary")
     }
 
+    @ToBeFixedForConfigurationCache(bottomSpecs = [
+        'SwiftXCTestComponentWithBothLibraryLinkageIntegrationTest',
+        'SwiftXCTestComponentWithSharedLibraryLinkageIntegrationTest',
+        'SwiftXCTestComponentWithStaticLibraryLinkageIntegrationTest'
+    ])
     @RequiresInstalledToolChain(ToolChainRequirement.SWIFTC_5)
     def "can build Swift 4 source code on Swift 5 compiler"() {
         given:
