@@ -119,6 +119,12 @@ abstract class AbstractCppComponentIntegrationTest extends AbstractNativeLanguag
     }
 
     @RequiresInstalledToolChain(ToolChainRequirement.SUPPORTS_32_AND_64)
+    @ToBeFixedForConfigurationCache(bottomSpecs = [
+        'CppUnitTestComponentWithBothLibraryLinkageIntegrationTest',
+        'CppUnitTestComponentWithSharedLibraryLinkageIntegrationTest',
+        'CppUnitTestComponentWithStaticLibraryLinkageIntegrationTest',
+        'CppUnitTestComponentWithoutComponentIntegrationTest'
+    ])
     def "can build for multiple target machines"() {
         given:
         makeSingleProject()

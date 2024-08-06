@@ -29,7 +29,8 @@ import org.hamcrest.CoreMatchers
 abstract class AbstractSwiftComponentIntegrationTest extends AbstractNativeLanguageComponentIntegrationTest {
 
     @ToBeFixedForConfigurationCache(bottomSpecs = [
-        'SwiftXCTestComponentWithSharedLibraryLinkageIntegrationTest'
+        'SwiftXCTestComponentWithSharedLibraryLinkageIntegrationTest',
+        'SwiftXCTestComponentWithStaticLibraryLinkageIntegrationTest'
     ])
     def "sources are built with Swift tools"() {
         given:
@@ -190,6 +191,9 @@ abstract class AbstractSwiftComponentIntegrationTest extends AbstractNativeLangu
     }
 
     @RequiresInstalledToolChain(ToolChainRequirement.SWIFTC_5)
+    @ToBeFixedForConfigurationCache(bottomSpecs = [
+        'SwiftXCTestComponentWithApplicationIntegrationTest'
+    ])
     def "throws exception with meaningful message when building Swift 3 source code on Swift 5 compiler"() {
         given:
         makeSingleProject()
