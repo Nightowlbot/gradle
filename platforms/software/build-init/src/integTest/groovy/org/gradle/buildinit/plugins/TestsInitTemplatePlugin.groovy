@@ -21,6 +21,7 @@ import org.gradle.test.fixtures.plugin.PluginBuilder
 trait TestsInitTemplatePlugin {
     def setup() {
         setupRepositoriesViaInit()
+        executer.withFileLeakDetection()
     }
 
     private void setupRepositoriesViaInit() {
