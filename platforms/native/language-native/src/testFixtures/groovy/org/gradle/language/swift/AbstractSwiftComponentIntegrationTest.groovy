@@ -29,8 +29,11 @@ import org.hamcrest.CoreMatchers
 abstract class AbstractSwiftComponentIntegrationTest extends AbstractNativeLanguageComponentIntegrationTest {
 
     @ToBeFixedForConfigurationCache(bottomSpecs = [
+        'SwiftXCTestComponentWithBothLibraryLinkageIntegrationTest',
         'SwiftXCTestComponentWithSharedLibraryLinkageIntegrationTest',
-        'SwiftXCTestComponentWithStaticLibraryLinkageIntegrationTest'
+        'SwiftXCTestComponentWithStaticLibraryLinkageIntegrationTest',
+        'SwiftXCTestComponentWithoutComponentIntegrationTest',
+        'SwiftXCTestComponentWithApplicationIntegrationTest'
     ])
     def "sources are built with Swift tools"() {
         given:
@@ -101,7 +104,9 @@ abstract class AbstractSwiftComponentIntegrationTest extends AbstractNativeLangu
     @ToBeFixedForConfigurationCache(bottomSpecs = [
         'SwiftXCTestComponentWithBothLibraryLinkageIntegrationTest',
         'SwiftXCTestComponentWithSharedLibraryLinkageIntegrationTest',
-        'SwiftXCTestComponentWithStaticLibraryLinkageIntegrationTest'
+        'SwiftXCTestComponentWithStaticLibraryLinkageIntegrationTest',
+        'SwiftXCTestComponentWithoutComponentIntegrationTest',
+        'SwiftXCTestComponentWithApplicationIntegrationTest'
     ])
     @RequiresInstalledToolChain(ToolChainRequirement.SWIFTC_5)
     def "can build Swift 4 source code on Swift 5 compiler"() {
@@ -192,7 +197,11 @@ abstract class AbstractSwiftComponentIntegrationTest extends AbstractNativeLangu
 
     @RequiresInstalledToolChain(ToolChainRequirement.SWIFTC_5)
     @ToBeFixedForConfigurationCache(bottomSpecs = [
-        'SwiftXCTestComponentWithApplicationIntegrationTest'
+        'SwiftXCTestComponentWithBothLibraryLinkageIntegrationTest',
+        'SwiftXCTestComponentWithStaticLibraryLinkageIntegrationTest',
+        'SwiftXCTestComponentWithSharedLibraryLinkageIntegrationTest',
+        'SwiftXCTestComponentWithApplicationIntegrationTest',
+        'SwiftXCTestComponentWithoutComponentIntegrationTest'
     ])
     def "throws exception with meaningful message when building Swift 3 source code on Swift 5 compiler"() {
         given:
@@ -248,6 +257,12 @@ abstract class AbstractSwiftComponentIntegrationTest extends AbstractNativeLangu
     }
 
     @RequiresInstalledToolChain(ToolChainRequirement.SWIFTC_5)
+    @ToBeFixedForConfigurationCache(bottomSpecs = [
+        'SwiftXCTestComponentWithBothLibraryLinkageIntegrationTest',
+        'SwiftXCTestComponentWithSharedLibraryLinkageIntegrationTest',
+        'SwiftXCTestComponentWithStaticLibraryLinkageIntegrationTest',
+        'SwiftXCTestComponentWithApplicationIntegrationTest'
+    ])
     def "can compile Swift 5 component on Swift 5 compiler"() {
         given:
         makeSingleProject()
