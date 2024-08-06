@@ -26,6 +26,7 @@ description = "Contains implementations of template loading framework classes us
 
 dependencies {
     api(projects.buildInitTemplatesApi)
+    api(projects.coreApi)
     api(projects.loggingApi)
 
     implementation(projects.stdlibJavaExtensions)

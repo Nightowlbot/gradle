@@ -72,6 +72,7 @@ import org.gradle.api.internal.tasks.TaskStatistics;
 import org.gradle.api.internal.tasks.properties.TaskScheme;
 import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.problems.internal.InternalProblems;
+import org.gradle.buildinit.templates.internal.AvailableTemplates;
 import org.gradle.buildinit.templates.internal.TemplateLoader;
 import org.gradle.configuration.ConfigurationTargetIdentifier;
 import org.gradle.configuration.project.DefaultProjectConfigurationActionContainer;
@@ -439,6 +440,12 @@ public class ProjectScopeServices implements ServiceRegistrationProvider {
 
     @Provides
     protected TemplateLoader createTemplateLoader(ProjectInternal project) {
-        return new TemplateLoader(project.getClassLoaderScope().getLocalClassLoader(), project.getLogger());
+        project.getLogger().lifecycle("Project type: " + project.getClass().getName());
+        return new TemplateLoader(project.provider(() -> project.getClassLoaderScope().getLocalClassLoader()), project.getLogger());
+    }
+
+    @Provides
+    protected AvailableTemplates createAvailableTemplates(ProjectInternal project) {
+        return new TemplateLoader(project.provider(() -> project.getClassLoaderScope().getLocalClassLoader()), project.getLogger()).loadTemplates();
     }
 }

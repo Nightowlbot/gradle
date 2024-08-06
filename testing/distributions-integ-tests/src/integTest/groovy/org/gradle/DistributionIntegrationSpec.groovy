@@ -49,6 +49,7 @@ abstract class DistributionIntegrationSpec extends AbstractIntegrationSpec {
         "build-cache-packaging",
         "build-cache-spi",
         "build-events",
+        "build-init-templates-api",
         "build-operations",
         "build-option",
         "build-process-services",
@@ -134,7 +135,7 @@ abstract class DistributionIntegrationSpec extends AbstractIntegrationSpec {
      * Change this whenever you add or remove subprojects for distribution-packaged plugins (lib/plugins).
      */
     int getPackagedPluginsJarCount() {
-        82
+        80
     }
 
     /**
