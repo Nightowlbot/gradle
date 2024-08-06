@@ -23,7 +23,6 @@ import org.gradle.api.GradleException;
 import org.gradle.api.Incubating;
 import org.gradle.api.file.Directory;
 import org.gradle.api.file.ProjectLayout;
-import org.gradle.api.internal.project.ProjectInternal;
 import org.gradle.api.internal.tasks.userinput.NonInteractiveUserInputHandler;
 import org.gradle.api.internal.tasks.userinput.UserInputHandler;
 import org.gradle.api.internal.tasks.userinput.UserQuestions;
@@ -88,7 +87,6 @@ public abstract class InitBuild extends DefaultTask {
     static final int MINIMUM_VERSION_SUPPORTED_BY_FOOJAY_API = 7;
     static final int DEFAULT_JAVA_VERSION = 21;
 
-    private final AvailableTemplates availableTemplates = new TemplateLoader((ProjectInternal) getProject()).loadTemplates();
     private final Directory projectDir = getProject().getLayout().getProjectDirectory();
     private String type;
     private final Property<Boolean> splitProject = getProject().getObjects().property(Boolean.class);
@@ -289,18 +287,19 @@ public abstract class InitBuild extends DefaultTask {
     @TaskAction
     public void setupProjectLayout() {
         UserInputHandler inputHandler = getEffectiveInputHandler();
-        if (shouldUseTemplate(inputHandler)) {
-            doTemplateProjectGeneration(inputHandler);
+        AvailableTemplates availableTemplates = getServices().get(TemplateLoader.class).loadTemplates();
+        if (shouldUseTemplate(inputHandler, availableTemplates)) {
+            doTemplateProjectGeneration(inputHandler, availableTemplates);
         } else {
             doProceduralProjectGeneration(inputHandler);
         }
     }
 
-    private boolean shouldUseTemplate(UserInputHandler inputHandler) {
+    private boolean shouldUseTemplate(UserInputHandler inputHandler, AvailableTemplates availableTemplates) {
         return availableTemplates.areAvailable() && inputHandler.askUser(uq -> uq.askBooleanQuestion("Templates found.  Do you want to generate a project using a template?", true)).get();
     }
 
-    private void doTemplateProjectGeneration(UserInputHandler inputHandler) {
+    private void doTemplateProjectGeneration(UserInputHandler inputHandler, AvailableTemplates availableTemplates) {
         Function<UserQuestions, InitProjectConfig> templateSelector = buildTemplateSelector(availableTemplates);
         InitProjectConfig config = inputHandler.askUser(templateSelector).get();
         InitProjectGenerator generator = availableTemplates.getProjectGenerator(config.getProjectType());

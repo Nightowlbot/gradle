@@ -16,7 +16,6 @@
 
 package org.gradle.buildinit.templates.internal;
 
-import org.gradle.api.internal.project.ProjectInternal;
 import org.gradle.api.logging.Logger;
 import org.gradle.buildinit.templates.InitProjectGenerator;
 import org.gradle.buildinit.templates.InitProjectSpec;
@@ -35,9 +34,9 @@ public final class TemplateLoader {
     private final ClassLoader projectClassLoader;
     private final Logger logger;
 
-    public TemplateLoader(ProjectInternal project) {
-        this.projectClassLoader = project.getClassLoaderScope().getLocalClassLoader();
-        this.logger = project.getLogger();
+    public TemplateLoader(ClassLoader classLoader, Logger logger) {
+        this.projectClassLoader = classLoader;
+        this.logger = logger;
     }
 
     public AvailableTemplates loadTemplates() {

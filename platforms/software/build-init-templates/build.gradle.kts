@@ -18,9 +18,15 @@ plugins {
     id("gradlebuild.distribution.api-java")
 }
 
-description = "Contains API plugins can implement to supply templates to use to initialize new projects."
+/**
+ * These classes would more naturally belong in the Build Init plugin project, but are separated out to avoid a circular dependency, as build-init
+ * already depends upon Core, and Core contains the ProjectScopeServices class which needs to know about the template loading classes.
+ */
+description = "Contains implementations of template loading framework classes used by the Build Init plugin."
 
 dependencies {
-    api(projects.coreApi)
-    api(projects.stdlibJavaExtensions)
+    api(projects.buildInitTemplatesApi)
+    api(projects.loggingApi)
+
+    implementation(projects.stdlibJavaExtensions)
 }

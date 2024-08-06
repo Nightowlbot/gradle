@@ -26,7 +26,6 @@ dependencies {
     api(libs.jsr305)
     api(libs.maven3Settings)
 
-    api(projects.buildInitTemplatesApi)
     api(projects.baseServices)
     api(projects.core)
     api(projects.coreApi)
@@ -40,6 +39,8 @@ dependencies {
     api(projects.toolchainsJvmShared)
     api(projects.workers)
 
+    implementation(projects.buildInitTemplates)
+    implementation(projects.buildInitTemplatesApi)
     implementation(projects.loggingApi)
     implementation(projects.platformNative)
     implementation(projects.pluginsApplication) {
