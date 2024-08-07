@@ -261,7 +261,8 @@ abstract class AbstractSwiftComponentIntegrationTest extends AbstractNativeLangu
         'SwiftXCTestComponentWithBothLibraryLinkageIntegrationTest',
         'SwiftXCTestComponentWithSharedLibraryLinkageIntegrationTest',
         'SwiftXCTestComponentWithStaticLibraryLinkageIntegrationTest',
-        'SwiftXCTestComponentWithApplicationIntegrationTest'
+        'SwiftXCTestComponentWithApplicationIntegrationTest',
+        'SwiftXCTestComponentWithoutComponentIntegrationTest'
     ])
     def "can compile Swift 5 component on Swift 5 compiler"() {
         given:
