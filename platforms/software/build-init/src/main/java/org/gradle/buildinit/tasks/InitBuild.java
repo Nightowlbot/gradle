@@ -53,8 +53,8 @@ import org.gradle.buildinit.templates.InitProjectConfig;
 import org.gradle.buildinit.templates.InitProjectGenerator;
 import org.gradle.buildinit.templates.InitProjectParameter;
 import org.gradle.buildinit.templates.InitProjectSpec;
-import org.gradle.buildinit.templates.internal.AvailableTemplates;
 import org.gradle.buildinit.templates.internal.TemplateLoader;
+import org.gradle.buildinit.templates.internal.TemplateRegistry;
 import org.gradle.internal.instrumentation.api.annotations.NotToBeReplacedByLazyProperty;
 import org.gradle.internal.instrumentation.api.annotations.ToBeReplacedByLazyProperty;
 import org.gradle.internal.logging.text.TreeFormatter;
@@ -72,7 +72,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.function.Function;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 
@@ -99,6 +98,12 @@ public abstract class InitBuild extends DefaultTask {
     private final Property<String> javaVersion = getProject().getObjects().property(String.class);
     @Internal
     private ProjectLayoutSetupRegistry projectLayoutRegistry;
+    @Internal
+    private final Property<TemplateRegistry> templateRegistry = getProject().getObjects().property(TemplateRegistry.class);
+
+    public InitBuild() {
+        templateRegistry.convention(getServices().get(TemplateLoader.class).loadTemplates());
+    }
 
     /**
      * Should default values automatically be accepted for options that are not configured explicitly?
@@ -284,46 +289,54 @@ public abstract class InitBuild extends DefaultTask {
         return projectLayoutRegistry;
     }
 
+    /**
+     * The available templates that have been loaded and can be used for project generation.
+     *
+     * @return the available templates instance
+     * @since 8.11
+     */
+    @Incubating
+    protected Property<TemplateRegistry> getTemplateRegistry() {
+        return templateRegistry;
+    }
+
     @TaskAction
     public void setupProjectLayout() {
         UserInputHandler inputHandler = getEffectiveInputHandler();
-        AvailableTemplates availableTemplates = getServices().get(TemplateLoader.class).loadTemplates();
-        if (shouldUseTemplate(inputHandler, availableTemplates)) {
-            doTemplateProjectGeneration(inputHandler, availableTemplates);
+        if (shouldUseTemplate(inputHandler)) {
+            doTemplateProjectGeneration(inputHandler);
         } else {
             doProceduralProjectGeneration(inputHandler);
         }
     }
 
-    private boolean shouldUseTemplate(UserInputHandler inputHandler, AvailableTemplates availableTemplates) {
-        return availableTemplates.areAvailable() && inputHandler.askUser(uq -> uq.askBooleanQuestion("Templates found.  Do you want to generate a project using a template?", true)).get();
+    private boolean shouldUseTemplate(UserInputHandler inputHandler) {
+        boolean templatesAvailable = templateRegistry.get().areTemplatesAvailable();
+        return templatesAvailable && inputHandler.askUser(uq -> uq.askBooleanQuestion("Templates found.  Do you want to generate a project using a template?", true)).get();
     }
 
-    private void doTemplateProjectGeneration(UserInputHandler inputHandler, AvailableTemplates availableTemplates) {
-        Function<UserQuestions, InitProjectConfig> templateSelector = buildTemplateSelector(availableTemplates);
-        InitProjectConfig config = inputHandler.askUser(templateSelector).get();
-        InitProjectGenerator generator = availableTemplates.getProjectGenerator(config.getProjectType());
+    private void doTemplateProjectGeneration(UserInputHandler inputHandler) {
+        InitProjectConfig config = inputHandler.askUser(this::selectAndConfigureTemplate).get();
+        InitProjectGenerator generator = templateRegistry.get().getProjectGenerator(config.getProjectType());
         generator.generate(config, projectDir);
         generateWrapper();
     }
 
-    private Function<UserQuestions, InitProjectConfig> buildTemplateSelector(AvailableTemplates availableTemplates) {
-        return userQuestions -> {
-            InitProjectSpec template = userQuestions.choice("Select project type", availableTemplates.getAvailableTemplates())
-                .renderUsing(InitProjectSpec::getDisplayName)
-                .ask();
+    private InitProjectConfig selectAndConfigureTemplate(UserQuestions userQuestions) {
+        InitProjectSpec template = userQuestions.choice("Select project type", templateRegistry.get().getAvailableTemplates())
+            .renderUsing(InitProjectSpec::getDisplayName)
+            .ask();
 
-            return new InitProjectConfig() {
-                @Override
-                public InitProjectSpec getProjectType() {
-                    return template;
-                }
+        return new InitProjectConfig() {
+            @Override
+            public InitProjectSpec getProjectType() {
+                return template;
+            }
 
-                @Override
-                public Map<InitProjectParameter<?>, Object> getArguments() {
-                    return Collections.emptyMap();
-                }
-            };
+            @Override
+            public Map<InitProjectParameter<?>, Object> getArguments() {
+                return Collections.emptyMap();
+            }
         };
     }
 

@@ -17,7 +17,6 @@
 package org.gradle.buildinit.templates.internal;
 
 import org.gradle.api.logging.Logger;
-import org.gradle.api.provider.Provider;
 import org.gradle.buildinit.templates.InitProjectGenerator;
 import org.gradle.buildinit.templates.InitProjectSpec;
 import org.gradle.buildinit.templates.InitProjectSupplier;
@@ -32,42 +31,23 @@ public final class TemplateLoader {
      * We can't load using the current thread here to get the classes loaded by plugins,
      * we have to load from the project's classloader.
      */
-    private final Provider<ClassLoader> classLoader;
+    private final ClassLoader classLoader;
     private final Logger logger;
 
-    public TemplateLoader(Provider<ClassLoader> classLoader, Logger logger) {
+    public TemplateLoader(ClassLoader classLoader, Logger logger) {
         this.classLoader = classLoader;
         this.logger = logger;
     }
 
-    public AvailableTemplates loadTemplates() {
+    public TemplateRegistry loadTemplates() {
         Map<InitProjectGenerator, List<InitProjectSpec>> templatesBySource = new HashMap<>();
 
-        logger.lifecycle("Trying to load templates from classLoader: {}", classLoader.get());
-        ServiceLoader.load(InitProjectSupplier.class, classLoader.get()).forEach(supplier -> {
-            List<InitProjectSpec> templates = supplier.getProjectDefinitions();
-            templates.forEach(template -> logger.info("Loaded template: '{}', supplied by: '{}', generated via: '{}'", template.getDisplayName(), supplier.getClass().getName(), supplier.getProjectGenerator().getClass().getName()));
-            templatesBySource.put(supplier.getProjectGenerator(), templates);
-        });
-        logger.lifecycle("Trying to load templates from this.getClass().getClassLoader(): {}", this.getClass().getClassLoader());
-        ServiceLoader.load(InitProjectSupplier.class, this.getClass().getClassLoader()).forEach(supplier -> {
-            List<InitProjectSpec> templates = supplier.getProjectDefinitions();
-            templates.forEach(template -> logger.info("Loaded template: '{}', supplied by: '{}', generated via: '{}'", template.getDisplayName(), supplier.getClass().getName(), supplier.getProjectGenerator().getClass().getName()));
-            templatesBySource.put(supplier.getProjectGenerator(), templates);
-        });
-        logger.lifecycle("Trying to load templates from Thread.currentThread().getContextClassLoader(): {}", Thread.currentThread().getContextClassLoader());
-        ServiceLoader.load(InitProjectSupplier.class, Thread.currentThread().getContextClassLoader()).forEach(supplier -> {
-            List<InitProjectSpec> templates = supplier.getProjectDefinitions();
-            templates.forEach(template -> logger.info("Loaded template: '{}', supplied by: '{}', generated via: '{}'", template.getDisplayName(), supplier.getClass().getName(), supplier.getProjectGenerator().getClass().getName()));
-            templatesBySource.put(supplier.getProjectGenerator(), templates);
-        });
-        logger.lifecycle("Trying to load templates from classloader.getParent(): {}", classLoader.get().getParent());
-        ServiceLoader.load(InitProjectSupplier.class, classLoader.get().getParent()).forEach(supplier -> {
+        ServiceLoader.load(InitProjectSupplier.class, classLoader).forEach(supplier -> {
             List<InitProjectSpec> templates = supplier.getProjectDefinitions();
             templates.forEach(template -> logger.info("Loaded template: '{}', supplied by: '{}', generated via: '{}'", template.getDisplayName(), supplier.getClass().getName(), supplier.getProjectGenerator().getClass().getName()));
             templatesBySource.put(supplier.getProjectGenerator(), templates);
         });
 
-        return new AvailableTemplates(templatesBySource);
+        return new TemplateRegistry(templatesBySource);
     }
 }

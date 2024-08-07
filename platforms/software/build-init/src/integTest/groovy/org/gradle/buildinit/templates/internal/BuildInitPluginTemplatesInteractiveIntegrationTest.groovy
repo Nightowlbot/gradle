@@ -20,9 +20,11 @@ import org.gradle.buildinit.plugins.AbstractInteractiveInitIntegrationSpec
 import org.gradle.buildinit.plugins.TestsInitTemplatePlugin
 import org.gradle.plugin.management.internal.template.TemplatePluginHandler
 import org.gradle.test.fixtures.ConcurrentTestUtil
+import org.gradle.test.fixtures.file.LeaksFileHandles
 import org.gradle.util.internal.TextUtil
 
 class BuildInitPluginTemplatesInteractiveIntegrationTest extends AbstractInteractiveInitIntegrationSpec implements TestsInitTemplatePlugin {
+    @LeaksFileHandles
     def "prompts to choose template properly"() {
         given:
         publishTestPlugin()

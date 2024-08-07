@@ -27,6 +27,7 @@ dependencies {
     api(libs.maven3Settings)
 
     api(projects.baseServices)
+    api(projects.buildInitTemplates)
     api(projects.core)
     api(projects.coreApi)
     api(projects.daemonServices)
@@ -39,7 +40,6 @@ dependencies {
     api(projects.toolchainsJvmShared)
     api(projects.workers)
 
-    implementation(projects.buildInitTemplates)
     implementation(projects.buildInitTemplatesApi)
     implementation(projects.loggingApi)
     implementation(projects.platformNative)

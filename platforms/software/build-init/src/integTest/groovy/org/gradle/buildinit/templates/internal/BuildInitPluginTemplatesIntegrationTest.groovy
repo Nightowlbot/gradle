@@ -19,6 +19,7 @@ package org.gradle.buildinit.templates.internal
 import org.gradle.buildinit.plugins.AbstractInitIntegrationSpec
 import org.gradle.buildinit.plugins.TestsInitTemplatePlugin
 import org.gradle.plugin.management.internal.template.TemplatePluginHandler
+import org.gradle.test.fixtures.file.LeaksFileHandles
 
 class BuildInitPluginTemplatesIntegrationTest extends AbstractInitIntegrationSpec implements TestsInitTemplatePlugin {
     def "can specify 3rd party plugin using argument to init"() {
@@ -173,6 +174,7 @@ class BuildInitPluginTemplatesIntegrationTest extends AbstractInitIntegrationSpe
         // TODO: should appear exactly once, but no way to automatically verify this currently.  Looking at the output, it is true currently
     }
 
+    @LeaksFileHandles
     def "can specify custom plugin using argument to init"() {
         given:
         publishTestPlugin()
@@ -191,6 +193,7 @@ class BuildInitPluginTemplatesIntegrationTest extends AbstractInitIntegrationSpe
         assertWrapperGenerated()
     }
 
+    @LeaksFileHandles
     def "can specify multiple plugins using argument to init"() {
         given:
         publishTestPlugin()

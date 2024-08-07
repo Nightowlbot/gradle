@@ -23,10 +23,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public final class AvailableTemplates {
+/**
+ * Manages the available project templates.
+ *
+ * @since 8.11
+ */
+public final class TemplateRegistry {
     private final Map<InitProjectGenerator, List<InitProjectSpec>> templatesBySource;
 
-    public AvailableTemplates(Map<InitProjectGenerator, List<InitProjectSpec>> templatesBySource) {
+    public TemplateRegistry(Map<InitProjectGenerator, List<InitProjectSpec>> templatesBySource) {
         this.templatesBySource = templatesBySource;
     }
     public List<InitProjectSpec> getAvailableTemplates() {
@@ -41,7 +46,7 @@ public final class AvailableTemplates {
             .orElseThrow(() -> new IllegalStateException("Spec not found in available templates"));
     }
 
-    public boolean areAvailable() {
+    public boolean areTemplatesAvailable() {
         return !templatesBySource.isEmpty();
     }
 }
