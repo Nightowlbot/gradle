@@ -15,7 +15,7 @@
  */
 package org.gradle.nativeplatform
 
-
+import org.gradle.integtests.fixtures.ToBeFixedForConfigurationCache
 import org.gradle.nativeplatform.fixtures.AbstractInstalledToolChainIntegrationSpec
 import org.gradle.nativeplatform.fixtures.NativePlatformsTestFixture
 import org.gradle.nativeplatform.fixtures.app.CppHelloWorldApp
@@ -235,6 +235,7 @@ model {
         installation("projectA/build/install/main").exec().out == app.englishOutput
     }
 
+    @ToBeFixedForConfigurationCache
     def "produces reasonable error message when no output file is defined for binary"() {
         given:
         buildFile << """
@@ -265,6 +266,7 @@ model {
         failure.assertHasCause("Static library file not set for prebuilt static library 'hello:${NativePlatformsTestFixture.defaultPlatformName}DebugDefaultStatic'.")
     }
 
+    @ToBeFixedForConfigurationCache
     def "produces reasonable error message when prebuilt library output file does not exist"() {
         given:
         buildFile << """

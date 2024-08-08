@@ -16,7 +16,7 @@
 
 package org.gradle.nativeplatform.toolchain
 
-import org.gradle.integtests.fixtures.ToBeFixedForConfigurationCache
+
 import org.gradle.nativeplatform.fixtures.AbstractInstalledToolChainIntegrationSpec
 import org.gradle.nativeplatform.fixtures.NativePlatformsTestFixture
 import org.gradle.nativeplatform.fixtures.RequiresInstalledToolChain
@@ -54,7 +54,6 @@ model {
         helloWorldApp.library.writeSources(file("src/hello"))
     }
 
-    @ToBeFixedForConfigurationCache
     def "can build when language tools that are not required are not available"() {
         when:
         buildFile << """
@@ -94,7 +93,6 @@ model {
         succeeds "help"
     }
 
-    @ToBeFixedForConfigurationCache
     def "tool chain is not available when no tools are available"() {
         when:
         buildFile << """
@@ -126,7 +124,6 @@ model {
     }
 
     @Requires(IntegTestPreconditions.NotParallelExecutor)
-    @ToBeFixedForConfigurationCache
     def "fails when required language tool is not available but other language tools are available"() {
         when:
         buildFile << """
@@ -147,7 +144,6 @@ model {
         failure.assertThatCause(CoreMatchers.startsWith("Could not find C compiler 'does-not-exist'"))
     }
 
-    @ToBeFixedForConfigurationCache
     def "fails when required linker tool is not available but language tool is available"() {
         when:
         buildFile << """

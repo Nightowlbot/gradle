@@ -51,7 +51,6 @@ model {
         executable("build/binaries/mainExecutable/main").assertDoesNotExist()
     }
 
-    @ToBeFixedForConfigurationCache
     def "assemble task constructs all buildable binaries"() {
         given:
         new CHelloWorldApp().writeSources(file("src/main"))
@@ -90,7 +89,6 @@ model {
         executable("build/exe/main/unknown/main").assertDoesNotExist()
     }
 
-    @ToBeFixedForConfigurationCache
     def "assemble task produces sensible error when there are no buildable binaries"() {
         buildFile << """
 apply plugin: 'c'
@@ -138,7 +136,6 @@ model {
               - Don't know how to build for platform 'unknown'.""")
     }
 
-    @ToBeFixedForConfigurationCache
     def "assemble executable from component with multiple language source sets"() {
         given:
         useMixedSources()
@@ -173,7 +170,6 @@ model {
         executable("build/exe/main/main").exec().out == helloWorldApp.englishOutput
     }
 
-    @ToBeFixedForConfigurationCache
     def "assemble executable binary directly from language source sets"() {
         given:
         useMixedSources()
@@ -217,7 +213,6 @@ model {
         helloWorldApp.writeSources(file("src/test"))
     }
 
-    @ToBeFixedForConfigurationCache
     def "build fails when link executable fails"() {
         given:
         buildFile << """
@@ -242,7 +237,6 @@ model {
         failure.assertThatCause(containsText("Linker failed while linking ${exeName}"))
     }
 
-    @ToBeFixedForConfigurationCache
     def "build fails when link library fails"() {
         given:
         buildFile << """
@@ -276,7 +270,6 @@ model {
         failure.assertThatCause(containsText("Linker failed while linking ${libName}"))
     }
 
-    @ToBeFixedForConfigurationCache
     def "build fails when create static library fails"() {
         given:
         buildFile << """
@@ -311,7 +304,6 @@ model {
     }
 
     @Requires(UnitTestPreconditions.CanInstallExecutable)
-    @ToBeFixedForConfigurationCache
     def "installed executable receives command-line parameters"() {
         buildFile << """
 apply plugin: 'c'
