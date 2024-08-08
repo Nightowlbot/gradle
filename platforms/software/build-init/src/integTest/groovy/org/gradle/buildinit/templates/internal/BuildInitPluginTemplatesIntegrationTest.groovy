@@ -213,6 +213,20 @@ class BuildInitPluginTemplatesIntegrationTest extends AbstractInitIntegrationSpe
         assertWrapperGenerated()
     }
 
+    @LeaksFileHandles
+    def "can specify declarative plugin using argument to init"() {
+        when:
+        initSucceedsWithTemplatePlugins("org.gradle.experimental.jvm-ecosystem:0.1.9")
+
+        then:
+        assertResolvedPlugin("org.gradle.experimental.jvm-ecosystem", "0.1.9")
+        assertLoadedTemplate("Java Project Type")
+
+        // Note: If running in non-interactive mode, first template is used
+        assertProjectFileGenerated("project.output", "Hello, World!")
+        assertWrapperGenerated()
+    }
+
     private void initSucceedsWithTemplatePlugins(String pluginsProp = null) {
         def newProjectDir = file("new-project").with { createDir() }
         targetDir = newProjectDir
@@ -228,6 +242,7 @@ class BuildInitPluginTemplatesIntegrationTest extends AbstractInitIntegrationSpe
         println "Executing: '${args.join(" ")}')"
         println "Working Dir: '$newProjectDir'"
 
+        executer.noDeprecationChecks() // We don't care about these here
         succeeds args
     }
 
