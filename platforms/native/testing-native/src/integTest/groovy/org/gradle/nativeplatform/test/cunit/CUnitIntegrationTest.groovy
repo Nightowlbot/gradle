@@ -449,6 +449,7 @@ tasks.withType(RunTestExecutable) {
         executedAndNotSkipped ":runHelloTestCUnitExe"
     }
 
+    @ToBeFixedForConfigurationCache
     def "creates visual studio solution and project for cunit test suite"() {
         given:
         useStandardConfig()

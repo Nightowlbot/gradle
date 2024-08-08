@@ -17,6 +17,7 @@ package org.gradle.nativeplatform.test.googletest
 
 import org.gradle.ide.visualstudio.fixtures.ProjectFile
 import org.gradle.ide.visualstudio.fixtures.SolutionFile
+import org.gradle.integtests.fixtures.ToBeFixedForConfigurationCache
 import org.gradle.internal.os.OperatingSystem
 import org.gradle.nativeplatform.fixtures.AbstractInstalledToolChainIntegrationSpec
 import org.gradle.nativeplatform.fixtures.RequiresInstalledToolChain
@@ -404,6 +405,7 @@ tasks.withType(RunTestExecutable) {
         executedAndNotSkipped ":runHelloTestGoogleTestExe"
     }
 
+    @ToBeFixedForConfigurationCache
     def "creates visual studio solution and project for googleTest test suite"() {
         given:
         useStandardConfig()
