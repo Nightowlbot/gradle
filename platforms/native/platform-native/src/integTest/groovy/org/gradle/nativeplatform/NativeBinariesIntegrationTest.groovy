@@ -89,6 +89,7 @@ model {
         executable("build/exe/main/unknown/main").assertDoesNotExist()
     }
 
+    @ToBeFixedForConfigurationCache
     def "assemble task produces sensible error when there are no buildable binaries"() {
         buildFile << """
 apply plugin: 'c'

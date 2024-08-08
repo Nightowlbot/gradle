@@ -16,7 +16,7 @@
 
 package org.gradle.nativeplatform.toolchain
 
-
+import org.gradle.integtests.fixtures.ToBeFixedForConfigurationCache
 import org.gradle.nativeplatform.fixtures.AbstractInstalledToolChainIntegrationSpec
 import org.gradle.nativeplatform.fixtures.NativePlatformsTestFixture
 import org.gradle.nativeplatform.fixtures.RequiresInstalledToolChain
@@ -124,6 +124,7 @@ model {
     }
 
     @Requires(IntegTestPreconditions.NotParallelExecutor)
+    @ToBeFixedForConfigurationCache(because = "different failure reporting for vintage mode and storing to cache")
     def "fails when required language tool is not available but other language tools are available"() {
         when:
         buildFile << """

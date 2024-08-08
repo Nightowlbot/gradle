@@ -16,6 +16,7 @@
 package org.gradle.nativeplatform
 
 import groovy.test.NotYetImplemented
+import org.gradle.integtests.fixtures.ToBeFixedForConfigurationCache
 import org.gradle.nativeplatform.fixtures.AbstractInstalledToolChainIntegrationSpec
 import org.gradle.nativeplatform.fixtures.RequiresInstalledToolChain
 import org.gradle.nativeplatform.fixtures.app.CppHelloWorldApp
@@ -164,6 +165,7 @@ model {
         installation("build/install/main").exec().out == "Hello!"
     }
 
+    @ToBeFixedForConfigurationCache
     def "can customize binaries before and after linking"() {
         def helloWorldApp = new CppHelloWorldApp()
         given:
