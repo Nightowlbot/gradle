@@ -49,7 +49,6 @@ import org.gradle.api.internal.CollectionCallbackActionDecorator;
 import org.gradle.api.internal.DomainObjectContext;
 import org.gradle.api.internal.DynamicObjectAware;
 import org.gradle.api.internal.GradleInternal;
-import org.gradle.api.internal.MutationGuards;
 import org.gradle.api.internal.ProcessOperations;
 import org.gradle.api.internal.artifacts.DependencyManagementServices;
 import org.gradle.api.internal.artifacts.DependencyResolutionServices;
@@ -608,15 +607,14 @@ public abstract class DefaultProject extends AbstractPluginAware implements Proj
     }
 
     @Override
-    @Nonnull
     public Path getProjectPath() {
         return owner.getProjectPath();
     }
 
-    @Nullable
+    @Nonnull
     @Override
-    public Path getProjectIdentityPath() {
-        return getIdentityPath();
+    public ProjectIdentity getProjectIdentity() {
+        return owner.getIdentity();
     }
 
     @Override
@@ -1474,7 +1472,7 @@ public abstract class DefaultProject extends AbstractPluginAware implements Proj
     }
 
     private void assertMutatingMethodAllowed(String methodName) {
-        MutationGuards.of(getProjectConfigurator()).assertMutationAllowed(methodName, this, Project.class);
+        getProjectConfigurator().getMutationGuard().assertMutationAllowed(methodName, this, Project.class);
     }
 
     @Override
@@ -1556,20 +1554,14 @@ public abstract class DefaultProject extends AbstractPluginAware implements Proj
 
         @Override
         @Nullable
-        public Path getProjectPath() {
-            return delegate.getProjectPath();
-        }
-
-        @Override
-        @Nullable
         public ProjectInternal getProject() {
             return delegate.getProject();
         }
 
         @Nullable
         @Override
-        public Path getProjectIdentityPath() {
-            return delegate.getProjectIdentityPath();
+        public ProjectIdentity getProjectIdentity() {
+            return delegate.getProjectIdentity();
         }
 
         @Override
@@ -1600,6 +1592,11 @@ public abstract class DefaultProject extends AbstractPluginAware implements Proj
         @Override
         public boolean isDetachedState() {
             return true;
+        }
+
+        @Override
+        public String getDisplayName() {
+            return "detached context of " + delegate.getDisplayName();
         }
     }
 }
