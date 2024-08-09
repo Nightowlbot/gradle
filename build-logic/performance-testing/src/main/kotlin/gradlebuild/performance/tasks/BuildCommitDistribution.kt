@@ -172,7 +172,7 @@ abstract class BuildCommitDistribution @Inject internal constructor(
             "--no-configuration-cache",
             "--init-script",
             mirrorInitScript.absolutePath,
-            "-D${PLUGIN_PORTAL_OVERRIDE_URL_PROPERTY}=${System.getProperty(PLUGIN_PORTAL_OVERRIDE_URL_PROPERTY)}",
+            "-D$PLUGIN_PORTAL_OVERRIDE_URL_PROPERTY=${System.getProperty(PLUGIN_PORTAL_OVERRIDE_URL_PROPERTY)}",
             "clean",
             "-Dscan.tag.BuildCommitDistribution",
             ":distributions-full:binDistributionZip",
