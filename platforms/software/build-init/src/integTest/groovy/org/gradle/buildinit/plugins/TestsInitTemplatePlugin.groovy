@@ -25,12 +25,18 @@ trait TestsInitTemplatePlugin {
 
     private void setupRepositoriesViaInit() {
         groovyFile("init.gradle", """
+            int count = 0
             settingsEvaluated { settings ->
                 settings.pluginManagement {
+                    if (!["build-logic", "unified-plugin"].contains(settings.rootProject.name) && count == 0) { // This runs on the settings in the included build, too, exclude it's build-logic
+                        includeBuild("../../../../../../../../../../now-in-android/declarative-gradle/unified-prototype/unified-plugin")
+                        count++
+                    }
                     repositories {
                         maven {
                             url '${mavenRepo.uri}'
                         }
+                        google() // For AGP, needed by D-G prototypeA
                         gradlePluginPortal()
                     }
                 }
